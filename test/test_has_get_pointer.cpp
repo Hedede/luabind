@@ -21,9 +21,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <luabind/detail/has_get_pointer.hpp>
-#include <boost/mpl/assert.hpp>
-#include <boost/get_pointer.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 namespace lb = luabind::detail;
 
@@ -40,7 +37,7 @@ namespace test
 
   Y* get_pointer(Y const&);
   
-  struct Z : boost::enable_shared_from_this<Z> {};
+  struct Z : std::enable_shared_from_this<Z> {};
   
 } // namespace test
 
