@@ -27,11 +27,9 @@
 #include <boost/ref.hpp> // detail::push()
 #include <boost/mpl/bool.hpp> // value_wrapper_traits specializations
 #include <boost/mpl/apply_wrap.hpp>
-#ifdef LUABIND_CPP0x
+
 # include <tuple>
-#else
-# include <boost/tuple/tuple.hpp>
-#endif
+
 #include <boost/optional.hpp>
 
 #include <luabind/nil.hpp>
@@ -46,9 +44,6 @@
 
 #include <boost/iterator/iterator_facade.hpp> // iterator
 
-#ifndef LUABIND_CPP0x
-#include <boost/preprocessor/iteration/iterate.hpp>
-#endif
 #include <boost/utility/enable_if.hpp>
 
 namespace luabind {
@@ -281,8 +276,6 @@ LUABIND_BINARY_OP_DEF(<, lua_lessthan)
   public:
       ~object_interface() {}
 
-# ifdef LUABIND_CPP0x
-
       template <class... Args>
       call_proxy<
           Derived, std::tuple<Args const*...>
@@ -291,45 +284,6 @@ LUABIND_BINARY_OP_DEF(<, lua_lessthan)
           typedef std::tuple<Args const*...> arguments;
           return call_proxy<Derived, arguments>(derived(), arguments(&args...));
       }
-
-# else
-
-      call_proxy<Derived, boost::tuples::tuple<> > operator()();
-
-      template<class A0>
-      call_proxy<
-          Derived
-        , boost::tuples::tuple<A0 const*>
-      > operator()(A0 const& a0)
-      {
-          typedef boost::tuples::tuple<A0 const*> arguments;
-
-          return call_proxy<Derived, arguments>(
-              derived()
-            , arguments(&a0)
-          );
-      }
-
-      template<class A0, class A1>
-      call_proxy<
-          Derived
-        , boost::tuples::tuple<A0 const*, A1 const*>
-      > operator()(A0 const& a0, A1 const& a1)
-      {
-          typedef boost::tuples::tuple<A0 const*, A1 const*> arguments;
-
-          return call_proxy<Derived, arguments>(
-              derived()
-            , arguments(&a0, &a1)
-          );
-      }
-
-      // The rest of the overloads are PP-generated.
-      #define BOOST_PP_ITERATION_PARAMS_1 (3, \
-          (3, LUABIND_MAX_ARITY, <luabind/detail/object_call.hpp>))
-      #include BOOST_PP_ITERATE()
-
-# endif // LUABIND_CPP0x
 
       operator safe_bool_type*() const
       {
@@ -1085,7 +1039,6 @@ namespace detail
   template<int Index>
   struct push_args_from_tuple
   {
-# ifdef LUABIND_CPP0x
 
       template <class Args, class Policies, class N, class E>
       static void push_args(
@@ -1114,28 +1067,6 @@ namespace detail
           );
       }
 
-# else // LUABIND_CPP0x
-
-      template<class H, class T, class Policies>
-      inline static void apply(lua_State* L, const boost::tuples::cons<H, T>& x, const Policies& p) 
-      {
-          convert_to_lua_p<Index>(L, *x.get_head(), p);
-          push_args_from_tuple<Index+1>::apply(L, x.get_tail(), p);
-      }
-
-      template<class H, class T>
-      inline static void apply(lua_State* L, const boost::tuples::cons<H, T>& x) 
-      {
-          convert_to_lua(L, *x.get_head());
-          push_args_from_tuple<Index+1>::apply(L, x.get_tail());
-      }
-
-      template<class Policies>
-      inline static void apply(lua_State*, const boost::tuples::null_type&, const Policies&) {}
-
-      inline static void apply(lua_State*, const boost::tuples::null_type&) {}
-
-# endif // LUABIND_CPP0x
   };
 
 } // namespace detail
@@ -1191,11 +1122,7 @@ namespace adl
 
           detail::push_args_from_tuple<1>::apply(interpreter, arguments, Policies());
 
-# ifdef LUABIND_CPP0x
           if (detail::pcall(interpreter, std::tuple_size<Arguments>::value, 1))
-# else
-          if (detail::pcall(interpreter, boost::tuples::length<Arguments>::value, 1))
-# endif
           {
 #ifndef LUABIND_NO_EXCEPTIONS
               throw luabind::error(interpreter);
@@ -1217,19 +1144,6 @@ namespace adl
       Arguments arguments;
   };
 
-# ifndef LUABIND_CPP0x
-
-  template<class Derived>
-  call_proxy<Derived, boost::tuples::tuple<> >
-  object_interface<Derived>::operator()()
-  {
-      return call_proxy<Derived, boost::tuples::tuple<> >(
-          derived()
-        , boost::tuples::tuple<>()
-      );
-  }
-
-# endif
 
   // Simple value_wrapper adaptor with the sole purpose of helping with
   // overload resolution. Use this as a function parameter type instead

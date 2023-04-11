@@ -1,33 +1,16 @@
-// Copyright Daniel Wallin 2008. Use, modification and distribution is
+// Copyright Daniel Wallin 2010. Use, modification and distribution is
 // subject to the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#if !BOOST_PP_IS_ITERATING
+#ifndef LUABIND_DETAIL_CALL_0X_100630_HPP
+# define LUABIND_DETAIL_CALL_0X_100630_HPP
 
-# ifndef LUABIND_CALL2_080911_HPP
-#  define LUABIND_CALL2_080911_HPP
-
-#  include <luabind/config.hpp>
-
-#  ifdef LUABIND_CPP0x
-#   include <luabind/detail/call_0x.hpp>
-#  else
-
-#  include <boost/mpl/apply_wrap.hpp>
-#  include <boost/mpl/begin_end.hpp>
-#  include <boost/mpl/deref.hpp>
-#  include <boost/mpl/front.hpp>
-#  include <boost/mpl/long.hpp>
-#  include <boost/mpl/size.hpp>
-#  include <boost/preprocessor/control/if.hpp>
-#  include <boost/preprocessor/iteration/iterate.hpp>
-#  include <boost/preprocessor/iteration/local.hpp>
-#  include <boost/preprocessor/repetition/enum.hpp>
-#  include <boost/preprocessor/repetition/enum_trailing_params.hpp>
-#  include <boost/type_traits/is_void.hpp>
-
-#  include <luabind/detail/policy.hpp>
-#  include <luabind/yield_policy.hpp>
+# include <luabind/config.hpp>
+# include <luabind/vector.hpp>
+# include <luabind/yield_policy.hpp>
+# include <luabind/detail/policy.hpp>
+# include <luabind/detail/index_tuple.hpp>
+# include <type_traits>
 
 namespace luabind { namespace detail {
 
@@ -72,38 +55,116 @@ struct LUABIND_API invoke_context
     int candidate_index;
 };
 
-template <class F, class Signature, class Policies, class IsVoid>
-inline int invoke0(
-    lua_State* L, function_object const& self, invoke_context& ctx
-  , F const& f, Signature, Policies const& policies, IsVoid, mpl::true_)
-{
-    return invoke_member(
-        L, self, ctx, f, Signature(), policies
-      , mpl::long_<mpl::size<Signature>::value - 1>(), IsVoid()
-    );
-}
-
-template <class F, class Signature, class Policies, class IsVoid>
-inline int invoke0(
-    lua_State* L, function_object const& self, invoke_context& ctx,
-    F const& f, Signature, Policies const& policies, IsVoid, mpl::false_)
-{
-    return invoke_normal(
-        L, self, ctx, f, Signature(), policies
-      , mpl::long_<mpl::size<Signature>::value - 1>(), IsVoid()
-    );
-}
-
-template <class F, class Signature, class Policies>
+template <class F, class... Args, class Policies>
 inline int invoke(
     lua_State* L, function_object const& self, invoke_context& ctx
-  , F const& f, Signature, Policies const& policies)
+  , F const& f, vector<Args...>, Policies const& policies)
 {
-    return invoke0(
-        L, self, ctx, f, Signature(), policies
-      , boost::is_void<typename mpl::front<Signature>::type>()
-      , boost::is_member_function_pointer<F>()
-   );
+    return invoke_aux(
+        L, self, ctx, f, policies, vector<Args...>()
+      , typename make_index_tuple<sizeof...(Args) - 1>::type()
+    );
+}
+
+template <int N, class T, class Policies>
+struct make_arg_converter
+{
+    typedef typename find_conversion_policy<N + 1, Policies>::type generator;
+    typedef typename mpl::apply_wrap2<generator, T, lua_to_cpp>::type type;
+};
+
+template <class R, class Policies>
+struct make_result_converter
+{
+    typedef typename find_conversion_policy<0, Policies>::type generator;
+    typedef typename mpl::apply_wrap2<generator, R, cpp_to_lua>::type type;
+};
+
+struct void_result
+{};
+
+template <class Policies>
+struct make_result_converter<void, Policies>
+{
+    typedef void_result type;
+};
+
+template <class F, class Policies, class R, class... Args, int... Indices>
+inline int invoke_aux(
+    lua_State* L, function_object const& self, invoke_context& ctx
+  , F const& f, Policies const& policies
+  , vector<R, Args...>, index_tuple<Indices...>)
+{
+    typename make_result_converter<R, Policies>::type result_converter;
+
+    return invoke_actual(
+        L, self, ctx, f, policies
+      , vector<R, Args...>(), index_tuple<Indices...>(), result_converter
+      , typename make_arg_converter<Indices, Args, Policies>::type()...
+    );
+}
+
+inline int sum_scores(int const* first, int const* last)
+{
+    int result = 0;
+
+    for (; first != last; ++first)
+    {
+        if (*first < 0)
+            return *first;
+        result += *first;
+    }
+
+    return result;
+}
+
+template <class T, class Converter>
+int compute_score(lua_State* L, Converter& converter, int index)
+{
+    return converter.match(L, LUABIND_DECORATE_TYPE(T), index);
+}
+
+inline int compute_indices(int*, int base)
+{
+    return base;
+}
+
+template <class Converter, class... Rest>
+int compute_indices(
+    int* target, int base, Converter& converter, Rest&... rest)
+{
+    *target = base;
+    return compute_indices(target + 1, base + converter.consumed_args(), rest...);
+}
+
+template <class F, class ResultConverter, class... Args>
+void invoke_function(
+    lua_State* L, F const& f, std::false_type, ResultConverter& result_converter
+  , Args&&... args)
+{
+    result_converter.apply(L, f(std::forward<Args>(args)...));
+}
+
+template <class F, class... Args>
+void invoke_function(
+    lua_State* L, F const& f, std::false_type, void_result, Args&&... args)
+{
+    f(std::forward<Args>(args)...);
+}
+
+template <class F, class ResultConverter, class This, class... Args>
+void invoke_function(
+    lua_State* L, F const& f, std::true_type, ResultConverter& result_converter
+  , This&& this_, Args&&... args)
+{
+    result_converter.apply(L, (this_.*f)(std::forward<Args>(args)...));
+}
+
+template <class F, class This, class... Args>
+void invoke_function(
+    lua_State* L, F const& f, std::true_type, void_result, This&& this_, Args&&... args)
+{
+    (this_.*f)(std::forward<Args>(args)...);
 }
 
 inline int maybe_yield_aux(lua_State*, int results, mpl::false_)
@@ -123,147 +184,35 @@ int maybe_yield(lua_State* L, int results, Policies*)
         L, results, has_policy<Policies, yield_policy>());
 }
 
-inline int sum_scores(int const* first, int const* last)
-{
-    int result = 0;
+// Helper that ignores everything passed to it. Used so that we can invoke
+// postcall on converters in a parameter pack expansion.
+template <class... T>
+void ignore(T&&...)
+{}
 
-    for (; first != last; ++first)
-    {
-        if (*first < 0)
-            return *first;
-        result += *first;
-    }
-
-    return result;
-}
-
-#  define LUABIND_INVOKE_NEXT_ITER(n) \
-    typename mpl::next< \
-        BOOST_PP_IF( \
-            n, BOOST_PP_CAT(iter,BOOST_PP_DEC(n)), first) \
-    >::type
-
-#  define LUABIND_INVOKE_NEXT_INDEX(n) \
-    BOOST_PP_IF( \
-        n \
-      , BOOST_PP_CAT(index,BOOST_PP_DEC(n)) + \
-            BOOST_PP_CAT(c,BOOST_PP_DEC(n)).consumed_args() \
-      , 1 \
-    )
-
-#  define LUABIND_INVOKE_COMPUTE_ARITY(n) + BOOST_PP_CAT(c,n).consumed_args()
-
-#  define LUABIND_INVOKE_DECLARE_CONVERTER(n) \
-    typedef LUABIND_INVOKE_NEXT_ITER(n) BOOST_PP_CAT(iter,n); \
-    typedef typename mpl::deref<BOOST_PP_CAT(iter,n)>::type \
-        BOOST_PP_CAT(a,n); \
-    typedef typename find_conversion_policy<n + 1, Policies>::type \
-        BOOST_PP_CAT(p,n); \
-    typename mpl::apply_wrap2< \
-        BOOST_PP_CAT(p,n), BOOST_PP_CAT(a,n), lua_to_cpp>::type BOOST_PP_CAT(c,n); \
-    int const BOOST_PP_CAT(index,n) = LUABIND_INVOKE_NEXT_INDEX(n);
-
-#  define LUABIND_INVOKE_COMPUTE_SCORE(n)                                   \
-    , BOOST_PP_CAT(c,n).match(                                              \
-        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,n)), BOOST_PP_CAT(index,n))
-
-#  define LUABIND_INVOKE_ARG(z, n, base) \
-    BOOST_PP_CAT(c,base(n)).apply( \
-        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,base(n))), BOOST_PP_CAT(index,base(n)))
-
-#  define LUABIND_INVOKE_CONVERTER_POSTCALL(n) \
-    BOOST_PP_CAT(c,n).converter_postcall( \
-        L, LUABIND_DECORATE_TYPE(BOOST_PP_CAT(a,n)), BOOST_PP_CAT(index,n));
-
-#  define BOOST_PP_ITERATION_PARAMS_1 \
-    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
-#  include BOOST_PP_ITERATE()
-
-#  define LUABIND_INVOKE_VOID
-#  define BOOST_PP_ITERATION_PARAMS_1 \
-    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
-#  include BOOST_PP_ITERATE()
-
-#  undef LUABIND_INVOKE_VOID
-#  define LUABIND_INVOKE_MEMBER
-#  define BOOST_PP_ITERATION_PARAMS_1 \
-    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
-#  include BOOST_PP_ITERATE()
-
-#  define LUABIND_INVOKE_VOID
-#  define BOOST_PP_ITERATION_PARAMS_1 \
-    (3, (0, LUABIND_MAX_ARITY, <luabind/detail/call.hpp>))
-#  include BOOST_PP_ITERATE()
-
-}} // namespace luabind::detail
-
-# endif // LUABIND_CPP0x
-
-# endif // LUABIND_CALL2_080911_HPP
-
-#else // BOOST_PP_IS_ITERATING
-
-# ifdef LUABIND_INVOKE_MEMBER
-#  define N BOOST_PP_INC(BOOST_PP_ITERATION())
-# else
-#  define N BOOST_PP_ITERATION()
-# endif
-
-template <class F, class Signature, class Policies>
-inline int
-# ifdef LUABIND_INVOKE_MEMBER
-invoke_member
-# else
-invoke_normal
-# endif
-(
+template <
+    class F, class Policies, class R, class... Args, int... Indices
+  , class ResultConverter, class... Converters
+>
+inline int invoke_actual(
     lua_State* L, function_object const& self, invoke_context& ctx
-  , F const& f, Signature, Policies const&, mpl::long_<N>
-# ifdef LUABIND_INVOKE_VOID
-  , mpl::true_
-# else
-  , mpl::false_
-# endif
-)
+  , F const& f, Policies const& policies
+  , vector<R, Args...>, index_tuple<Indices...>
+  , ResultConverter& result_converter, Converters&&... converters)
 {
-    typedef typename mpl::begin<Signature>::type first;
-# ifndef LUABIND_INVOKE_VOID
-    typedef typename mpl::deref<first>::type result_type;
-    typedef typename find_conversion_policy<0, Policies>::type result_policy;
-    typename mpl::apply_wrap2<
-        result_policy, result_type, cpp_to_lua>::type result_converter;
-# endif
-
-# if N > 0
-#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_DECLARE_CONVERTER(n)
-#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
-#  include BOOST_PP_LOCAL_ITERATE()
-# endif
-
-    int const arity = 0
-# if N > 0
-#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_COMPUTE_ARITY(n)
-#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
-#  include BOOST_PP_LOCAL_ITERATE()
-# endif
-    ;
+    int indices[sizeof...(Args) + 1];
+    int const arity = compute_indices(indices + 1, 1, converters...) - 1;
 
     int const arguments = lua_gettop(L);
-
     int score = -1;
 
     if (arity == arguments)
     {
         int const scores[] = {
-            0
-# if N > 0
-#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_COMPUTE_SCORE(n)
-#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
-#  include BOOST_PP_LOCAL_ITERATE()
-# endif
+            compute_score<Args>(L, converters, indices[Indices + 1])...
         };
 
-        score = sum_scores(scores + 1, scores + 1 + N);
+        score = sum_scores(scores, scores + sizeof...(Args));
     }
 
     if (score >= 0 && score < ctx.best_score)
@@ -286,37 +235,18 @@ invoke_normal
 
     if (score == ctx.best_score && ctx.candidate_index == 1)
     {
-# ifndef LUABIND_INVOKE_VOID
-        result_converter.apply(
-            L,
-# endif
-# ifdef LUABIND_INVOKE_MEMBER
-            (c0.apply(L, LUABIND_DECORATE_TYPE(a0), index0).*f)(
-                BOOST_PP_ENUM(BOOST_PP_DEC(N), LUABIND_INVOKE_ARG, BOOST_PP_INC)
-            )
-# else
-#  define LUABIND_INVOKE_IDENTITY(x) x
-            f(
-                BOOST_PP_ENUM(N, LUABIND_INVOKE_ARG, LUABIND_INVOKE_IDENTITY)
-            )
-#  undef LUABIND_INVOKE_IDENTITY
-# endif
-# ifndef LUABIND_INVOKE_VOID
-        )
-# endif
-        ;
+        invoke_function(
+            L, f, std::is_member_function_pointer<F>(), result_converter
+          , converters.apply(L, LUABIND_DECORATE_TYPE(Args), indices[Indices + 1])...
+        );
 
-# if N > 0
-#  define BOOST_PP_LOCAL_MACRO(n) LUABIND_INVOKE_CONVERTER_POSTCALL(n)
-#  define BOOST_PP_LOCAL_LIMITS (0,N-1)
-#  include BOOST_PP_LOCAL_ITERATE()
-# endif
+        ignore(
+            (converters.converter_postcall(
+                L, LUABIND_DECORATE_TYPE(Args), indices[Indices + 1]), 0)...
+        );
 
         results = maybe_yield(L, lua_gettop(L) - arguments, (Policies*)0);
-
-        int const indices[] = {
-            arguments + results BOOST_PP_ENUM_TRAILING_PARAMS(N, index)
-        };
+        indices[0] = arguments + results;
 
         policy_list_postcall<Policies>::apply(L, indices);
     }
@@ -324,7 +254,6 @@ invoke_normal
     return results;
 }
 
-# undef N
+}} // namespace luabind::detail
 
-#endif
-
+#endif // LUABIND_DETAIL_CALL_0X_100630_HPP

@@ -20,9 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-#if !BOOST_PP_IS_ITERATING
-
 #ifndef LUABIND_CALL_FUNCTION_HPP_INCLUDED
 #define LUABIND_CALL_FUNCTION_HPP_INCLUDED
 
@@ -31,14 +28,6 @@
 #include <boost/mpl/if.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/mpl/or.hpp>
-#ifndef LUABIND_CPP0x
-# include <boost/preprocessor/repeat.hpp>
-# include <boost/preprocessor/iteration/iterate.hpp>
-# include <boost/preprocessor/repetition/enum.hpp>
-# include <boost/preprocessor/repetition/enum_params.hpp>
-# include <boost/preprocessor/repetition/enum_binary_params.hpp>
-# include <boost/preprocessor/punctuation/comma_if.hpp>
-#endif
 
 #include <luabind/error.hpp>
 #include <luabind/detail/convert_to_lua.hpp>
@@ -91,11 +80,7 @@ namespace luabind
 					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-# ifdef LUABIND_CPP0x
-                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
-# else
-					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
-# endif
+					if (m_fun(L, std::tuple_size<Tuple>::value, 0))
 					{
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -125,11 +110,7 @@ namespace luabind
 					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-# ifdef LUABIND_CPP0x
-                    if (m_fun(L, std::tuple_size<Tuple>::value, 1))
-# else
-					if (m_fun(L, boost::tuples::length<Tuple>::value, 1))
-# endif
+					if (m_fun(L, std::tuple_size<Tuple>::value, 1))
 					{
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -175,11 +156,7 @@ namespace luabind
 					int top = lua_gettop(L);
 
 					detail::push_args_from_tuple<1>::apply(L, m_args, p);
-# ifdef LUABIND_CPP0x
-                    if (m_fun(L, std::tuple_size<Tuple>::value, 1))
-# else
-					if (m_fun(L, boost::tuples::length<Tuple>::value, 1))
-# endif
+					if (m_fun(L, std::tuple_size<Tuple>::value, 1))
 					{ 
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -266,11 +243,7 @@ namespace luabind
 					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-# ifdef LUABIND_CPP0x
-                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
-# else
-					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
-# endif
+					if (m_fun(L, std::tuple_size<Tuple>::value, 0))
 					{
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -297,11 +270,7 @@ namespace luabind
 					int top = lua_gettop(L);
 
 					detail::push_args_from_tuple<1>::apply(L, m_args, p);
-# ifdef LUABIND_CPP0x
-                    if (m_fun(L, std::tuple_size<Tuple>::value, 0))
-# else
-					if (m_fun(L, boost::tuples::length<Tuple>::value, 0))
-# endif
+					if (m_fun(L, std::tuple_size<Tuple>::value, 0))
 					{
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -330,8 +299,6 @@ namespace luabind
 			};
 
 	}
-
-# ifdef LUABIND_CPP0x
 
 
 namespace detail
@@ -408,132 +375,6 @@ typename detail::make_proxy<R, Args...>::type resume(
         L, 0, &detail::resume_impl, std::tuple<Args const*...>(&args...));
 }
 
-# else // LUABIND_CPP0x
-
-	#define BOOST_PP_ITERATION_PARAMS_1 (4, (0, LUABIND_MAX_ARITY, <luabind/detail/call_function.hpp>, 1))
-	#include BOOST_PP_ITERATE()
-
-# endif // LUABIND_CPP0x
-
 }
 
 #endif // LUABIND_CALL_FUNCTION_HPP_INCLUDED
-
-#elif BOOST_PP_ITERATION_FLAGS() == 1
-
-#define LUABIND_TUPLE_PARAMS(z, n, data) const A##n *
-#define LUABIND_OPERATOR_PARAMS(z, n, data) const A##n & a##n
-
-
-	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
-	call_function(lua_State* L, const char* name BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
-	{
-		assert(name && "luabind::call_function() expects a function name");
-		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
-#if BOOST_PP_ITERATION() == 0
-		tuple_t args;
-#else
-		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
-#endif
-		typedef typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
-
-		return proxy_type(L, 1, &detail::pcall, args);
-	}
-
-	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
-	call_function(luabind::object const& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
-	{
-		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
-#if BOOST_PP_ITERATION() == 0
-		tuple_t args;
-#else
-		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
-#endif
-		typedef typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-
-		obj.push(obj.interpreter());
-		return proxy_type(obj.interpreter(), 1, &detail::pcall, args);
-	}
-
-	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
-	resume_function(lua_State* L, const char* name BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
-	{
-		assert(name && "luabind::resume_function() expects a function name");
-		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
-#if BOOST_PP_ITERATION() == 0
-		tuple_t args;
-#else
-		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
-#endif
-		typedef typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-
-		lua_pushstring(L, name);
-		lua_gettable(L, LUA_GLOBALSINDEX);
-
-		return proxy_type(L, 1, &detail::resume_impl, args);
-	}
-
-	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
-	resume_function(luabind::object const& obj BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
-	{
-		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
-#if BOOST_PP_ITERATION() == 0
-		tuple_t args;
-#else
-		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
-#endif
-		typedef typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-
-		obj.push(obj.interpreter());
-		return proxy_type(obj.interpreter(), 1, &detail::resume_impl, args);
-	}
-
-	template<class Ret BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
-	typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type
-	resume(lua_State* L BOOST_PP_COMMA_IF(BOOST_PP_ITERATION()) BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_OPERATOR_PARAMS, _) )
-	{
-		typedef boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> tuple_t;
-#if BOOST_PP_ITERATION() == 0
-		tuple_t args;
-#else
-		tuple_t args(BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), &a));
-#endif
-		typedef typename boost::mpl::if_<boost::is_void<Ret>
-			, luabind::detail::proxy_function_void_caller<boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> >
-			, luabind::detail::proxy_function_caller<Ret, boost::tuples::tuple<BOOST_PP_ENUM(BOOST_PP_ITERATION(), LUABIND_TUPLE_PARAMS, _)> > >::type proxy_type;
-
-		return proxy_type(L, 0, &detail::resume_impl, args);
-	}
-
-
-#undef LUABIND_OPERATOR_PARAMS
-#undef LUABIND_TUPLE_PARAMS
-
-
-#endif
-
