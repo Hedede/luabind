@@ -41,9 +41,9 @@ namespace luabind {
     template<class T>
     struct pointee_sizeof
     {
-        BOOST_STATIC_CONSTANT(int, value = (
+        static constexpr int value = (
             sizeof(detail::deref_type((T(*)())0), 0L)
-        ));
+        );
 
         typedef boost::mpl::int_<value> type;
     };

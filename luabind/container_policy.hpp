@@ -104,8 +104,6 @@ namespace luabind { namespace detail {
 //	struct container_policy : converter_policy_tag
 	struct container_policy : conversion_policy<N>
 	{
-//		BOOST_STATIC_CONSTANT(int, index = N);
-
 		static void precall(lua_State*, const index_map&) {}
 		static void postcall(lua_State*, const index_map&) {}
 

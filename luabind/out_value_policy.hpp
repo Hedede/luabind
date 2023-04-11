@@ -70,12 +70,10 @@ namespace luabind { namespace detail
 	template<class U>
 	char_array<sizeof(typename identity<U>::type)> indirect_sizeof_test(by_value<U>);
 
-#endif
-
 	template<class T>
 	struct indirect_sizeof
 	{
-		BOOST_STATIC_CONSTANT(int, value = sizeof(indirect_sizeof_test(LUABIND_DECORATE_TYPE(T))));
+		static constexpr int value = sizeof(indirect_sizeof_test(LUABIND_DECORATE_TYPE(T)));
 	};
 
 	namespace mpl = boost::mpl;

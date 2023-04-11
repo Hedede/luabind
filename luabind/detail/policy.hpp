@@ -68,8 +68,8 @@ namespace luabind
 	template<int N, bool HasArg = true>
 	struct conversion_policy : detail::conversion_policy_base
 	{
-		BOOST_STATIC_CONSTANT(int, index = N);
-		BOOST_STATIC_CONSTANT(bool, has_arg = HasArg);
+		static constexpr int index = N;
+		static constexpr bool has_arg = HasArg;
 	};
 
 	class index_map
@@ -133,8 +133,8 @@ namespace luabind { namespace detail
 	{
 		static const T& t;
 
-		BOOST_STATIC_CONSTANT(bool, value = 
-			sizeof(is_policy_cons_test(t)) == sizeof(yes_t));
+		static constexpr bool value =
+			sizeof(is_policy_cons_test(t)) == sizeof(yes_t);
 
 		typedef boost::mpl::bool_<value> type;
 	};	
@@ -838,7 +838,7 @@ namespace detail
 
 	struct default_policy : converter_policy_tag
 	{
-		BOOST_STATIC_CONSTANT(bool, has_arg = true);
+		static constexpr bool has_arg = true;
 
 		template<class T>
 		static void precall(lua_State*, T, int) {}
@@ -878,7 +878,7 @@ namespace detail
 			typedef typename Policies::head head;
 			typedef typename Policies::tail tail;
 
-			BOOST_STATIC_CONSTANT(bool, found = (N == head::index));
+			static constexpr bool found = (N == head::index);
 
 			typedef typename
 				boost::mpl::if_c<found

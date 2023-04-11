@@ -109,9 +109,9 @@ namespace adl
     template <class T>
     struct impl 
     {
-        BOOST_STATIC_CONSTANT(bool, value =
+        static constexpr bool value =
             sizeof(is_object_interface_aux::check((T*)0)) == sizeof(yes)
-        );
+        ;
 
         typedef mpl::bool_<value> type;
     };
