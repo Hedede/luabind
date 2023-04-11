@@ -832,22 +832,22 @@ where:
 * ``raw`` is of type ``X*``
 * ``p`` is an instance of ``P``
 
-``get_pointer()`` overloads are provided for the smart pointers in
-Boost, and ``std::unique_ptr<>``. Should you need to provide your own
-overload, note that it is called unqualified and is expected to be found
-by *argument dependent lookup*. Thus it should be defined in the same
-namespace as the pointer type it operates on.
+``get_pointer()`` overloads are provided for the smart pointers in std
+Should you need to provide your own overload, note that it is called
+unqualified and is expected to be found by *argument dependent lookup*.
+Thus it should be defined in the same namespace as the pointer type
+it operates on.
 
 For example:
 
 .. parsed-literal::
 
-    class_<X, **boost::scoped_ptr<X>** >("X")
+    class_<X, **std::unique_ptr<X>** >("X")
       .def(constructor<>())
 
 Will cause luabind to hold any instance created on the Lua side in a
-``boost::scoped_ptr<X>``. Note that this doesn't mean **all** instances
-will be held by a ``boost::scoped_ptr<X>``. If, for example, you
+``std::unique_ptr<X>``. Note that this doesn't mean **all** instances
+will be held by a ``std::unique_ptr<X>``. If, for example, you
 register a function::
 
     std::unique_ptr<X> make_X();
