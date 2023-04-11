@@ -22,8 +22,6 @@
 
 #define LUABIND_BUILDING
 
-#include <boost/foreach.hpp>
-
 #include <luabind/lua_include.hpp>
 
 #include <luabind/config.hpp>
@@ -160,7 +158,7 @@ namespace luabind { namespace detail {
         if (has_wrapper)
             class_ids->put(m_wrapper_id, m_wrapper_type);
 
-        BOOST_FOREACH(cast_entry const& e, m_casts)
+        for (cast_entry const& e : m_casts)
         {
             casts->insert(e.src, e.target, e.cast);
         }
