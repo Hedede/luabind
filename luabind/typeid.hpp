@@ -11,14 +11,6 @@
 
 namespace luabind {
 
-# ifdef BOOST_MSVC
-#  pragma warning(push)
-// std::type_info::before() returns int, rather than bool.
-// At least on MSVC7.1, this is true for the comparison
-// operators as well.
-#  pragma warning(disable:4800)
-# endif
-
 class type_id
   : public boost::less_than_comparable<type_id>
 {
@@ -54,10 +46,6 @@ public:
 private:
     std::type_info const* id;
 };
-
-# ifdef BOOST_MSVC
-#  pragma warning(pop)
-# endif
 
 } // namespace luabind
 

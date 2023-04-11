@@ -945,11 +945,6 @@ namespace detail
       return cv.apply(interpreter, LUABIND_DECORATE_TYPE(T), -1);
   }
 
-# ifdef BOOST_MSVC
-#  pragma warning(push)
-#  pragma warning(disable:4702) // unreachable code
-# endif
-
   template<class T>
   struct throw_error_policy
   {
@@ -969,9 +964,6 @@ namespace detail
       }
   };
 
-# ifdef BOOST_MSVC
-#  pragma warning(pop)
-# endif
 
   template<class T>
   struct nothrow_error_policy
