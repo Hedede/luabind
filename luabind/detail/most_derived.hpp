@@ -30,11 +30,11 @@ namespace luabind { namespace detail {
 template<class Class, class WrappedClass>
 struct most_derived
 {
-    typedef typename boost::mpl::if_<
-        std::is_base_of<Class, WrappedClass>
+    using type = std::conditional_t<
+        std::is_base_of_v<Class, WrappedClass>
       , WrappedClass
       , Class
-    >::type type;
+    >;
 };
 
 }} // namespace luabind::detail

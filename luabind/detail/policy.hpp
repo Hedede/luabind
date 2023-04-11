@@ -880,11 +880,10 @@ namespace detail
 
 			static constexpr bool found = (N == head::index);
 
-			typedef typename
-				boost::mpl::if_c<found
+			using type = std::conditional_t<found
 					, head
 					, typename find_conversion_policy<N, tail>::type
-				>::type type;
+				>;
 		};
 	};
 
@@ -979,16 +978,16 @@ namespace detail
 
     template <class Policies, class Sought>
     struct has_policy
-      : mpl::if_<
-            std::is_same<typename Policies::head, Sought>
-          , mpl::true_
+      : std::conditional_t<
+            std::is_same_v<typename Policies::head, Sought>
+          , std::true_type
           , has_policy<typename Policies::tail, Sought>
-        >::type
+        >
     {};
 
     template <class Sought>
     struct has_policy<null_type, Sought>
-      : mpl::false_
+      : std::false_type
     {};
 
 }} // namespace luabind::detail

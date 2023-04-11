@@ -134,13 +134,13 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<std::is_same<lua_to_cpp, Direction>
-				, typename boost::mpl::if_<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+			using type = std::conditional_t<std::is_same<lua_to_cpp, Direction>
+				, std::conditional_t<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
-					>::type
+					>
 				, can_only_convert_from_lua_to_cpp
-			>::type type;
+			>;
 		};
 	};
 
@@ -212,13 +212,13 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<std::is_same<lua_to_cpp, Direction>
-				, typename boost::mpl::if_<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+			using type = std::conditional_t<std::is_same<lua_to_cpp, Direction>
+				, std::conditional_t<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, pure_out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
-					>::type
+					>
 				, can_only_convert_from_lua_to_cpp
-			>::type type;
+			>;
 		};
 	};
 	

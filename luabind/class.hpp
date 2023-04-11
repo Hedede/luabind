@@ -359,7 +359,7 @@ namespace luabind
 
         template <class T>
         struct reference_result
-          : mpl::if_<
+          : std::conditional_t<
                 mpl::or_<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_reference_t<T>
@@ -368,7 +368,7 @@ namespace luabind
 
         template <class T>
         struct reference_argument
-          : mpl::if_<
+          : std::conditional_t<
                 mpl::or_<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_reference_t<
@@ -379,7 +379,7 @@ namespace luabind
 
         template <class T, class Policies>
         struct inject_dependency_policy
-          : mpl::if_<
+          : std::conditional_t<
                 mpl::or_<
                     is_primitive<T>
                   , has_policy<Policies, detail::no_dependency_policy>
@@ -779,11 +779,10 @@ namespace luabind
 				,	no_bases
 			>::type bases_t;
 
-			typedef typename 
-				boost::mpl::if_<detail::is_bases<bases_t>
+			using Base = std::conditional_t<detail::is_bases<bases_t>
 					,	bases_t
 					,	bases<bases_t>
-				>::type Base;
+				>;
 	
             class_base::init(
                 typeid(T)
@@ -855,11 +854,11 @@ namespace luabind
         {
             typedef typename Signature::signature signature;
 
-            typedef typename boost::mpl::if_<
-                std::is_same<WrappedType, detail::null_type>
+            using construct_type = std::conditional_t<
+                std::is_same_v<WrappedType, detail::null_type>
               , T
               , WrappedType
-            >::type construct_type;
+            >;
 
             this->add_member(
                 new detail::constructor_registration<

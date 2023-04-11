@@ -133,11 +133,10 @@ namespace luabind { namespace detail
 		struct apply
 		{
 			typedef luabind::detail::is_nonconst_pointer<T> is_nonconst_p;
-			typedef typename boost::mpl::if_<
-                is_nonconst_p
+			using type = std::conditional_t<
+                is_nonconst_p::value
               , adopt_pointer<Pointer, Direction>
-              , only_accepts_nonconst_pointers
-            >::type type;
+              , only_accepts_nonconst_pointers>
 		};
 	};
 
