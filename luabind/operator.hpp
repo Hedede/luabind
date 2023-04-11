@@ -24,7 +24,6 @@
 #define OPERATOR_040729_HPP
 
 #include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/identity.hpp>
 #include <boost/mpl/apply_wrap.hpp>
 #include <luabind/detail/other.hpp>
 #include <luabind/raw_policy.hpp>
@@ -104,6 +103,9 @@ namespace luabind {
 
 namespace detail {
 
+template<typename T>
+struct identity { typedef T type; };
+
     template<class W, class T>
     struct unwrap_parameter_type
     {
@@ -112,7 +114,7 @@ namespace detail {
           , boost::mpl::identity<W&>
           , boost::mpl::eval_if<
                 std::is_same<T, const_self_type>
-              , boost::mpl::identity<W const&>
+              , identity<W const&>
               , unwrap_other<T>
             >
         >::type type;
@@ -148,7 +150,7 @@ namespace detail {
         : operator_<unary_operator<Derived, A> >
     {
         unary_operator(int) {}
-        
+
         template<class T, class Policies>
         struct apply
         {
