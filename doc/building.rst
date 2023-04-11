@@ -22,9 +22,6 @@ directory containing the Lua include directory and built libraries. At
 least for the purpose of running the test suite, the recommended way to
 get these is the `Lua Binaries`_ *Windows x86 DLL and Includes* package.
 
-Furthermore, the environment variable ``BOOST_ROOT`` must point to
-a Boost installation directory.
-
 .. _`Lua Binaries`: http://luabinaries.luaforge.net
 
 
@@ -35,10 +32,6 @@ If your system already has Lua installed, it is very likely that the
 build system will automatically find it and just work. If you have
 Lua installed in a non-standard location, you may need to set
 ``LUA_PATH`` to point to the installation prefix.
-
-``BOOST_ROOT`` can be set to a Boost installation directory. If left
-unset, the build system will try to use boost headers from the standard
-include path.
 
 MacOSX
 ~~~~~~

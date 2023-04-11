@@ -24,16 +24,14 @@ installation instructions on the page linked above.
 Windows
 -------
 
-The environment variable "BOOST_ROOT" must be set to the directory where Boost
-was extracted. "LUA_PATH" must be set to a directory where Lua binaries and
-headers reside. The recommended way to get the Lua libraries is to download the
+The environment variable  "LUA_PATH" must be set to a directory where Lua binaries
+and headers reside. The recommended way to get the Lua libraries is to download the
 "DLL and Includes" package from:
 
   http://luabinaries.luaforge.net/download.html
 
 With these enviroment variables properly set:
 
-  $ set BOOST_ROOT=...
   $ set LUA_PATH=...
   $ bjam stage
 
