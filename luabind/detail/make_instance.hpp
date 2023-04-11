@@ -5,7 +5,6 @@
 #ifndef LUABIND_DETAIL_MAKE_INSTANCE_090310_HPP
 # define LUABIND_DETAIL_MAKE_INSTANCE_090310_HPP
 
-# include <boost/type_traits/is_polymorphic.hpp>
 # include <luabind/detail/inheritance.hpp>
 # include <luabind/detail/object_rep.hpp>
 
@@ -39,7 +38,7 @@ std::pair<class_id, void*> get_dynamic_class_aux(
 template <class T>
 std::pair<class_id, void*> get_dynamic_class(lua_State* L, T* p)
 {
-    return get_dynamic_class_aux(L, p, boost::is_polymorphic<T>());
+    return get_dynamic_class_aux(L, p, std::is_polymorphic<T>());
 }
 
 template <class T>

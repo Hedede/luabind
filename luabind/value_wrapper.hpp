@@ -39,9 +39,6 @@
 # include <boost/mpl/not.hpp>
 # include <boost/mpl/and.hpp>
 # include <boost/mpl/or.hpp>
-# include <boost/type_traits/is_reference.hpp>
-# include <boost/type_traits/is_pointer.hpp>
-# include <boost/type_traits/is_array.hpp>
 #endif
 
 namespace luabind {
@@ -80,9 +77,9 @@ struct value_wrapper_traits
         boost::mpl::and_<
             boost::mpl::not_<
                 boost::mpl::or_<
-                    boost::is_reference<T>
-                  , boost::is_pointer<T>
-                  , boost::is_array<T>
+                    std::is_reference<T>
+                  , std::is_pointer<T>
+                  , std::is_array<T>
                 >
             >
           , detail::has_value_wrapper_tag<T>
@@ -108,17 +105,15 @@ struct is_value_wrapper
 
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
-# include <boost/type_traits/remove_const.hpp>
-# include <boost/type_traits/remove_reference.hpp>
 
 namespace luabind {
 
 template<class T>
 struct is_value_wrapper_arg
   : is_value_wrapper<
-      typename boost::remove_const<
-          typename boost::remove_reference<T>::type
-      >::type
+      std::remove_const_t<
+          std::remove_reference_t<T>
+      >
     >
 {};
 
@@ -127,7 +122,6 @@ struct is_value_wrapper_arg
 #else
 
 # include <luabind/detail/yes_no.hpp>
-# include <boost/type_traits/add_reference.hpp>
 
 namespace luabind {
 
@@ -142,7 +136,7 @@ namespace detail
   template<class T>
   struct is_value_wrapper_arg_aux
   {
-      static typename boost::add_reference<T>::type x;
+      static std::add_reference_t<T> x;
 
       BOOST_STATIC_CONSTANT(bool, value = 
           sizeof(to_yesno(is_value_wrapper_arg_check(&x)))

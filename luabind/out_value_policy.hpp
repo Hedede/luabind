@@ -155,7 +155,7 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<boost::is_same<lua_to_cpp, Direction>
+			typedef typename boost::mpl::if_<std::is_same<lua_to_cpp, Direction>
 				, typename boost::mpl::if_<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
@@ -233,7 +233,7 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<boost::is_same<lua_to_cpp, Direction>
+			typedef typename boost::mpl::if_<std::is_same<lua_to_cpp, Direction>
 				, typename boost::mpl::if_<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, pure_out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers

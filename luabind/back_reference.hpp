@@ -27,8 +27,6 @@
 #include <luabind/wrapper_base.hpp>
 #include <luabind/detail/has_get_pointer.hpp>
 #include <luabind/get_pointer.hpp>
-#include <boost/type_traits/is_polymorphic.hpp>
-#include <boost/type_traits/is_const.hpp>
 #include <boost/mpl/if.hpp>
 
 namespace luabind {
@@ -52,7 +50,7 @@ namespace detail
   template<class T>
   wrap_base const* get_back_reference_aux1(T const* p)
   {
-      return get_back_reference_aux0(p, boost::is_polymorphic<T>());
+      return get_back_reference_aux0(p, std::is_polymorphic<T>());
   }
 
   template<class T>

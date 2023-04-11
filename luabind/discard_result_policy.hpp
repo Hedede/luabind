@@ -45,7 +45,7 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<boost::is_same<Direction, cpp_to_lua>
+			typedef typename boost::mpl::if_<std::is_same<Direction, cpp_to_lua>
 				, discard_converter
 				, can_only_convert_from_cpp_to_lua
 			>::type type;

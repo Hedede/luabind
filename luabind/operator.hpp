@@ -26,7 +26,6 @@
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/apply_wrap.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <luabind/detail/other.hpp>
 #include <luabind/raw_policy.hpp>
 
@@ -123,10 +122,10 @@ namespace detail {
     struct unwrap_parameter_type
     {
         typedef typename boost::mpl::eval_if<
-            boost::is_same<T, self_type>
+            std::is_same<T, self_type>
           , boost::mpl::identity<W&>
           , boost::mpl::eval_if<
-                boost::is_same<T, const_self_type>
+                std::is_same<T, const_self_type>
               , boost::mpl::identity<W const&>
               , unwrap_other<T>
             >

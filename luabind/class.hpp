@@ -73,8 +73,6 @@
 #include <string>
 #include <cassert>
 
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/is_member_object_pointer.hpp>
 #include <boost/mpl/apply.hpp>
 #include <boost/mpl/lambda.hpp>
 #include <boost/mpl/logical.hpp>
@@ -362,20 +360,20 @@ namespace luabind
         template <class T>
         struct reference_result
           : mpl::if_<
-                mpl::or_<boost::is_pointer<T>, is_primitive<T> >
+                mpl::or_<std::is_pointer<T>, is_primitive<T> >
               , T
-              , typename boost::add_reference<T>::type
+              , std::add_reference_t<T>
             >
         {};
 
         template <class T>
         struct reference_argument
           : mpl::if_<
-                mpl::or_<boost::is_pointer<T>, is_primitive<T> >
+                mpl::or_<std::is_pointer<T>, is_primitive<T> >
               , T
-              , typename boost::add_reference<
-                    typename boost::add_const<T>::type
-                >::type
+              , std::add_reference_t<
+                    std::add_const_t<T>
+                >
             >
         {};
 
@@ -418,7 +416,7 @@ namespace luabind
                 register_aux(
                     L
                   , context
-                  , make_get(L, get, boost::is_member_object_pointer<Get>())
+                  , make_get(L, get, std::is_member_object_pointer<Get>())
                   , set
                 );
             }
@@ -472,7 +470,7 @@ namespace luabind
             {
                 context[name] = property(
                     get_
-                  , make_set(L, set, boost::is_member_object_pointer<Set>())
+                  , make_set(L, set, std::is_member_object_pointer<Set>())
                 );
             }
 
@@ -510,7 +508,7 @@ namespace luabind
 		// WrappedType MUST inherit from T
 		typedef typename detail::extract_parameter<
 		    parameters_type
-		  , boost::is_base_and_derived<T, boost::mpl::_>
+		  , std::is_base_of<T, boost::mpl::_>
 		  , detail::null_type
 		>::type WrappedType;
 
@@ -519,8 +517,8 @@ namespace luabind
 		  , boost::mpl::not_<
 		        boost::mpl::or_<
                     detail::is_bases<boost::mpl::_>
-                  , boost::is_base_and_derived<boost::mpl::_, T>
-                  , boost::is_base_and_derived<T, boost::mpl::_>
+                  , std::is_base_of<boost::mpl::_, T>
+                  , std::is_base_of<T, boost::mpl::_>
 				>
 			>
 		  , detail::null_type
@@ -553,7 +551,7 @@ namespace luabind
               , detail::static_cast_<T, To>::execute
             );
 
-            add_downcast((To*)0, (T*)0, boost::is_polymorphic<To>());
+            add_downcast((To*)0, (T*)0, std::is_polymorphic<To>());
 		}
 
 		void gen_base_info(detail::type_<detail::null_type>)
@@ -767,7 +765,7 @@ namespace luabind
               , detail::static_cast_<U,T>::execute
             );
 
-            add_downcast((T*)0, (U*)0, boost::is_polymorphic<T>());
+            add_downcast((T*)0, (U*)0, std::is_polymorphic<T>());
         }
 
 		void init()
@@ -776,7 +774,7 @@ namespace luabind
 					parameters_type
 				,	boost::mpl::or_<
 							detail::is_bases<boost::mpl::_>
-						,	boost::is_base_and_derived<boost::mpl::_, T>
+						,	std::is_base_of<boost::mpl::_, T>
 					>
 				,	no_bases
 			>::type bases_t;
@@ -858,7 +856,7 @@ namespace luabind
             typedef typename Signature::signature signature;
 
             typedef typename boost::mpl::if_<
-                boost::is_same<WrappedType, detail::null_type>
+                std::is_same<WrappedType, detail::null_type>
               , T
               , WrappedType
             >::type construct_type;

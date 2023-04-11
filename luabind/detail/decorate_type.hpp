@@ -96,7 +96,6 @@ namespace luabind { namespace detail
 
 #else
 
-#include <boost/type_traits/is_array.hpp>
 
 	namespace
 	{

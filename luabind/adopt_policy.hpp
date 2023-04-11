@@ -29,7 +29,6 @@
 #include <luabind/detail/policy.hpp>
 #include <luabind/back_reference_fwd.hpp>
 #include <luabind/wrapper_base.hpp>
-#include <boost/type_traits/is_polymorphic.hpp>
 
 namespace luabind { namespace detail 
 {
@@ -67,7 +66,7 @@ namespace luabind { namespace detail
                 lua_touserdata(L, index));
             obj->release();
 
-            adjust_backref_ownership(ptr, boost::is_polymorphic<T>());
+            adjust_backref_ownership(ptr, std::is_polymorphic<T>());
 
             return ptr;
 		}

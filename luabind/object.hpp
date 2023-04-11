@@ -960,7 +960,7 @@ namespace detail
               "luabind::set_error_callback()");
           std::terminate();
 #endif
-          return *(typename boost::remove_reference<T>::type*)0;
+          return *(typename std::remove_reference_t<T>*)0;
       }
   };
 

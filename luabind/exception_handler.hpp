@@ -12,7 +12,6 @@
 
 # if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 #  include <boost/mpl/if.hpp>
-#  include <boost/type_traits/is_pointer.hpp>
 # endif
 
 namespace luabind {
@@ -43,7 +42,7 @@ namespace detail
   {
 #  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
       typedef typename mpl::if_<
-          boost::is_pointer<E>, E, E const&
+          std::is_pointer<E>, E, E const&
       >::type argument;
 #  else
       typedef E const& argument;

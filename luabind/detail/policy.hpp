@@ -30,17 +30,11 @@
 #include <string>
 #include <memory>
 
-#include <boost/type_traits/is_enum.hpp>
-#include <boost/type_traits/is_array.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/integral_c.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/type_traits/add_reference.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/is_pointer.hpp>
-#include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/bind/arg.hpp>
 #include <boost/bind/placeholders.hpp>
 #include <boost/limits.hpp>
@@ -55,8 +49,6 @@
 #include <luabind/detail/class_rep.hpp>
 #include <luabind/detail/has_get_pointer.hpp>
 #include <luabind/detail/make_instance.hpp>
-
-#include <boost/type_traits/add_reference.hpp>
 
 #include <luabind/detail/decorate_type.hpp>
 #include <luabind/weak_ref.hpp>
@@ -557,7 +549,7 @@ namespace luabind { namespace detail
             is_value_wrapper_arg<T>
           , value_wrapper_converter<T>
           , mpl::eval_if<
-                boost::is_enum<typename boost::remove_reference<T>::type>
+                std::is_enum<std::remove_reference_t<T>>
               , enum_converter
               , mpl::eval_if<
                     is_nonconst_pointer<T>
@@ -902,7 +894,7 @@ namespace detail
 		template<int N>
 		struct apply
 			: find_conversion_impl<
-				boost::is_base_and_derived<conversion_policy_base, typename Policies::head>::value
+				std::is_base_of<conversion_policy_base, typename Policies::head>::value
 			>::template apply<N, Policies>
 		{
 		};
@@ -988,7 +980,7 @@ namespace detail
     template <class Policies, class Sought>
     struct has_policy
       : mpl::if_<
-            boost::is_same<typename Policies::head, Sought>
+            std::is_same<typename Policies::head, Sought>
           , mpl::true_
           , has_policy<typename Policies::tail, Sought>
         >::type
