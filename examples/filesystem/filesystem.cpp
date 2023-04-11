@@ -9,13 +9,13 @@ extern "C"
 
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
+#include <std/filesystem/operations.hpp>
+#include <std/filesystem/path.hpp>
 
 #include "directory_iterator.hpp"
 
-const boost::filesystem::path& 
-identity(const boost::filesystem::path& x)
+const std::filesystem::path& 
+identity(const std::filesystem::path& x)
 {
 	return x;
 }
@@ -23,9 +23,9 @@ identity(const boost::filesystem::path& x)
 void bind_filesystem(lua_State* L)
 {
 	using namespace luabind;
-	using namespace boost::filesystem;
+	using namespace std::filesystem;
 
-	namespace fs = boost::filesystem;
+	namespace fs = std::filesystem;
 	
 	module(L, "filesystem")
 	[
@@ -88,7 +88,7 @@ int main(int argc, const char* argv[])
 
 	if (argc < 2)
 	{
-		std::cout << "This example will bind parts of the boost.Filesystem library\n"
+		std::cout << "This example will bind parts of the std.Filesystem library\n"
 			"and then run the given lua file.\n\n"
 			"usage: filesystem filename [args]\n";
 		return 1;
