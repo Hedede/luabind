@@ -16,10 +16,10 @@ struct Foo
 
 struct Bar
 {
-    boost::shared_ptr<Foo> getFoo() const { return m_foo; }
-    void setFoo( boost::shared_ptr<Foo> foo ) {  m_foo = foo; }
+    std::shared_ptr<Foo> getFoo() const { return m_foo; }
+    void setFoo( std::shared_ptr<Foo> foo ) {  m_foo = foo; }
 
-    boost::shared_ptr<Foo> m_foo;
+    std::shared_ptr<Foo> m_foo;
 };
 
 void test_main(lua_State* L)
@@ -30,10 +30,10 @@ void test_main(lua_State* L)
 
     module( L )
     [
-        class_<Foo, boost::shared_ptr<Foo> >( "Foo" )
+        class_<Foo, std::shared_ptr<Foo> >( "Foo" )
             .def( constructor<>() )
             .def_readwrite("baz", &Foo::m_baz),
-        class_<Bar, boost::shared_ptr<Bar> >( "Bar" )
+        class_<Bar, std::shared_ptr<Bar> >( "Bar" )
             .def( constructor<>() )
             .property("fooz", &Bar::getFoo, &Bar::setFoo)
             .def_readwrite("foo", &Bar::m_foo)

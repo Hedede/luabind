@@ -22,7 +22,6 @@
 
 #include <luabind/detail/has_get_pointer.hpp>
 #include <boost/mpl/assert.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/get_pointer.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
@@ -53,7 +52,7 @@ namespace luabind
 } // namespace luabind
 #endif
 
-BOOST_MPL_ASSERT(( lb::has_get_pointer<boost::shared_ptr<int> > ));
+BOOST_MPL_ASSERT(( lb::has_get_pointer<std::shared_ptr<int> > ));
 BOOST_MPL_ASSERT(( lb::has_get_pointer<test::Y> ));
 BOOST_MPL_ASSERT(( lb::has_get_pointer<char*> ));
 BOOST_MPL_ASSERT_NOT(( lb::has_get_pointer<int> ));

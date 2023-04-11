@@ -25,13 +25,12 @@
 #include <luabind/luabind.hpp>
 #include <luabind/wrapper_base.hpp>
 #include <luabind/adopt_policy.hpp>
-#include <boost/shared_ptr.hpp>
 
 namespace luabind {
 
 #ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
     template<class T>
-    T* get_pointer(boost::shared_ptr<T> const& p) { return p.get(); }
+    T* get_pointer(std::shared_ptr<T> const& p) { return p.get(); }
 #endif
 
 }
@@ -137,12 +136,12 @@ void test_main(lua_State* L)
 {
 	module(L)
 	[
-		class_<A, A_wrap, boost::shared_ptr<A> >("A")
+		class_<A, A_wrap, std::shared_ptr<A> >("A")
 			.def(constructor<>())
 			.def("f", &A::f, &A_wrap::default_f)
 			.def("g", &A::g, &A_wrap::default_g),
 
-		class_<B, A, B_wrap, boost::shared_ptr<A> >("B")
+		class_<B, A, B_wrap, std::shared_ptr<A> >("B")
 			.def(constructor<>())
 			.def("f", &B::f, &B_wrap::default_f)
 			.def("g", &B::g, &B_wrap::default_g),

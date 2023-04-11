@@ -885,9 +885,9 @@ Like this:
 
         module(L)
         [
-            class_<base, boost::shared_ptr<base> >("base")
+            class_<base, std::shared_ptr<base> >("base")
                 .def(constructor<>()),
-            class_<derived, base, **boost::shared_ptr<base>** >("derived")
+            class_<derived, base, **std::shared_ptr<base>** >("derived")
                 .def(constructor<>())
         ];
 

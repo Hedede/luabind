@@ -4,7 +4,6 @@
 
 #include "test.hpp"
 #include <luabind/luabind.hpp>
-#include <boost/shared_ptr.hpp>
 
 struct X
 {
@@ -56,9 +55,9 @@ std::unique_ptr<X> make1()
     return std::unique_ptr<X>(new X(1));
 }
 
-boost::shared_ptr<X> make2()
+std::shared_ptr<X> make2()
 {
-    return boost::shared_ptr<X>(new X(2));
+    return std::shared_ptr<X>(new X(2));
 }
 
 ptr make3()
