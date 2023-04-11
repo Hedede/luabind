@@ -239,7 +239,7 @@ void test_main(lua_State* L)
 		A a;
 
 		DOSTRING(L, "function test_ref(x) end");
-		call_function<void>(L, "test_ref", boost::ref(a));
+		call_function<void>(L, "test_ref", std::ref(a));
 	}
 
 	{

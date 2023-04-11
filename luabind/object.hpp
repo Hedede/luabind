@@ -24,7 +24,6 @@
 #define LUABIND_OBJECT_050419_HPP
 
 #include <boost/implicit_cast.hpp> // detail::push()
-#include <boost/ref.hpp> // detail::push()
 #include <boost/mpl/bool.hpp> // value_wrapper_traits specializations
 #include <boost/mpl/apply_wrap.hpp>
 
@@ -49,15 +48,15 @@ namespace luabind {
 namespace detail 
 {
   namespace mpl = boost::mpl;
-  
+
   template<class T, class ConverterGenerator>
   void push_aux(lua_State* interpreter, T& value, ConverterGenerator*)
   {
-      typedef typename boost::mpl::if_<
-          boost::is_reference_wrapper<T>
-        , typename boost::unwrap_reference<T>::type&
-        , T
-      >::type unwrapped_type;
+	  using unwrapped_type  = std::conditional_t<
+		is_reference_wrapper<T>::value,
+		std::unwrap_reference_t<T>&,
+		T
+	>
 
       typename mpl::apply_wrap2<
           ConverterGenerator,unwrapped_type,cpp_to_lua
@@ -66,7 +65,7 @@ namespace detail
       cv.apply(
           interpreter
         , boost::implicit_cast<
-              typename boost::unwrap_reference<T>::type&
+              std::unwrap_reference_t<T>&
           >(value)
       );
   }

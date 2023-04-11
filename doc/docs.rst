@@ -396,7 +396,7 @@ __ http://www.boost.org/doc/html/ref.html
 
 Like this::
 
-	int ret = call_function(L, "fun", boost::ref(val));
+	int ret = call_function(L, "fun", std::ref(val));
 
 
 If you want to use a custom error handler for the function call, see
