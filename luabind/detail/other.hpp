@@ -59,6 +59,6 @@ namespace luabind::detail
 	public:
 			typedef T type;
 	};
-}} // namespace luabind::detail
+} // namespace luabind::detail
 
 #endif // LUABIND_OTHER_HPP_INCLUDED

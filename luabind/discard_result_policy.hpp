@@ -27,8 +27,7 @@
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
 
-namespace luabind { namespace detail 
-{
+namespace luabind::detail {
 	struct discard_converter
 	{
 		template<class T>
@@ -45,14 +44,14 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			typedef typename boost::mpl::if_<std::is_same<Direction, cpp_to_lua>
+			using type = std::conditional_t<std::is_same_v<Direction, cpp_to_lua>
 				, discard_converter
 				, can_only_convert_from_cpp_to_lua
-			>::type type;
+			>;
 		};
 	};
 
-}}
+}
 
 namespace luabind
 {
