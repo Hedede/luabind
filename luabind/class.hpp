@@ -158,12 +158,12 @@ namespace luabind
 	{
         template <class T>
         struct is_bases
-          : mpl::false_
+          : std::false_type
         {};
 
         template <class... Args>
         struct is_bases<bases<Args...> >
-          : mpl::true_
+          : std::true_type
         {};
 
         template <class T, class P>
@@ -173,7 +173,7 @@ namespace luabind
 
         template <class P>
         struct is_unspecified<unspecified, P>
-          : mpl::true_
+          : std::true_type
         {};
 
         template <class P>
@@ -422,14 +422,14 @@ namespace luabind
             }
 
             template <class F>
-            object make_get(lua_State* L, F const& f, mpl::false_) const
+            object make_get(lua_State* L, F const& f, std::false_type) const
             {
                 return make_function(
                     L, f, deduce_signature(f, (Class*)0), get_policies);
             }
 
             template <class T, class D>
-            object make_get(lua_State* L, D T::* mem_ptr, mpl::true_) const
+            object make_get(lua_State* L, D T::* mem_ptr, std::true_type) const
             {
                 typedef typename reference_result<D>::type result_type;
                 typedef typename inject_dependency_policy<
@@ -444,14 +444,14 @@ namespace luabind
             }
 
             template <class F>
-            object make_set(lua_State* L, F const& f, mpl::false_) const
+            object make_set(lua_State* L, F const& f, std::false_type) const
             {
                 return make_function(
                     L, f, deduce_signature(f, (Class*)0), set_policies);
             }
 
             template <class T, class D>
-            object make_set(lua_State* L, D T::* mem_ptr, mpl::true_) const
+            object make_set(lua_State* L, D T::* mem_ptr, std::true_type) const
             {
                 typedef typename reference_argument<D>::type argument_type;
 
@@ -525,7 +525,7 @@ namespace luabind
 		>::type HeldType;
 
         template <class Src, class Target>
-        void add_downcast(Src*, Target*, boost::mpl::true_)
+        void add_downcast(Src*, Target*, std::true_type)
         {
             add_cast(
                 detail::registered_class<Src>::id
@@ -535,7 +535,7 @@ namespace luabind
         }
 
         template <class Src, class Target>
-        void add_downcast(Src*, Target*, boost::mpl::false_)
+        void add_downcast(Src*, Target*, std::false_type)
         {}
 
 		// this function generates conversion information
@@ -582,7 +582,7 @@ namespace luabind
 		{
 			return this->virtual_def(
 				name, f, detail::null_type()
-			  , detail::null_type(), boost::mpl::true_());
+			  , detail::null_type(), std::true_type());
 		}
 
 		// virtual functions
@@ -600,7 +600,7 @@ namespace luabind
 		{
 			return this->virtual_def(
 				name, fn, default_
-			  , policies, boost::mpl::false_());
+			  , policies, std::false_type());
 		}
 
 
@@ -827,7 +827,7 @@ namespace luabind
 		// these handle default implementation of virtual functions
 		template<class F, class Policies>
 		class_& virtual_def(char const* name, F const& fn
-			, Policies const&, detail::null_type, boost::mpl::true_)
+			, Policies const&, detail::null_type, std::true_type)
 		{
 			this->add_member(
 				new detail::memfun_registration<T, F, Policies>(
@@ -837,7 +837,7 @@ namespace luabind
 
 		template<class F, class Default, class Policies>
 		class_& virtual_def(char const* name, F const& fn
-			, Default const& default_, Policies const&, boost::mpl::false_)
+			, Default const& default_, Policies const&, std::false_type)
 		{
 			this->add_member(
 				new detail::memfun_registration<T, F, Policies>(

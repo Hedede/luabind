@@ -34,7 +34,7 @@ template <class T>
 struct default_converter<std::shared_ptr<T> >
   : default_converter<T*>
 {
-    typedef boost::mpl::false_ is_native;
+    typedef std::false_type is_native;
 
     template <class U>
     int match(lua_State* L, U, int index)

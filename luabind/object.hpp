@@ -136,7 +136,7 @@ namespace adl
 
   template<class T, class U>
   int binary_interpreter(lua_State*& L, T const& lhs, U const& rhs
-    , boost::mpl::true_, boost::mpl::true_)
+    , std::true_type, std::true_type)
   {
        L = value_wrapper_traits<T>::interpreter(lhs);
 		 lua_State* L2 = value_wrapper_traits<U>::interpreter(rhs);
@@ -155,14 +155,14 @@ namespace adl
 	
   template<class T, class U>
   int binary_interpreter(lua_State*& L, T const& x, U const&
-    , boost::mpl::true_, boost::mpl::false_)
+    , std::true_type, std::false_type)
   {
        L = value_wrapper_traits<T>::interpreter(x);
        return 0;
   }
 
   template<class T, class U>
-  int binary_interpreter(lua_State*& L, T const&, U const& x, boost::mpl::false_, boost::mpl::true_)
+  int binary_interpreter(lua_State*& L, T const&, U const& x, std::false_type, std::true_type)
   {
       L = value_wrapper_traits<U>::interpreter(x);
       return 0;
@@ -623,7 +623,7 @@ typedef detail::basic_iterator<detail::raw_access> raw_iterator;
 template<class T>
 struct value_wrapper_traits<adl::index_proxy<T> >
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     template<class Next>
     static lua_State* interpreter(adl::index_proxy<Next> const& proxy)
@@ -641,7 +641,7 @@ struct value_wrapper_traits<adl::index_proxy<T> >
 template<class AccessPolicy>
 struct value_wrapper_traits<adl::iterator_proxy<AccessPolicy> >
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     template<class Proxy>
     static lua_State* interpreter(Proxy const& p)
@@ -769,7 +769,7 @@ using adl::argument;
 template <class ValueWrapper, class Arguments>
 struct value_wrapper_traits<adl::call_proxy<ValueWrapper, Arguments> >
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     template<class W, class A>
     static lua_State* interpreter(adl::call_proxy<W,A> const& proxy)
@@ -788,7 +788,7 @@ struct value_wrapper_traits<adl::call_proxy<ValueWrapper, Arguments> >
 template<>
 struct value_wrapper_traits<object>
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     static lua_State* interpreter(object const& value)
     {
@@ -809,7 +809,7 @@ struct value_wrapper_traits<object>
 template<>
 struct value_wrapper_traits<argument>
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     static lua_State* interpreter(argument const& value)
     {

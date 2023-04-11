@@ -37,7 +37,7 @@ namespace luabind
   template<>
   struct value_wrapper_traits<X>
   {
-      typedef boost::mpl::true_ is_specialized;
+      typedef std::true_type is_specialized;
   };
 
 } // namespace luabind

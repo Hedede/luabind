@@ -584,7 +584,7 @@ struct default_converter
 template <class T, class Derived = default_converter<T> >
 struct native_converter_base
 {
-    typedef boost::mpl::true_ is_native;
+    typedef std::true_type is_native;
 
     int const consumed_args(...)
     {
@@ -759,7 +759,7 @@ struct default_converter<std::string const&>
 template <>
 struct default_converter<char const*>
 {
-    typedef boost::mpl::true_ is_native;
+    typedef std::true_type is_native;
 
     int const consumed_args(...)
     {

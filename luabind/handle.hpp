@@ -120,7 +120,7 @@ inline void handle::replace(lua_State* interpreter, int stack_index)
 template<>
 struct value_wrapper_traits<handle>
 {
-    typedef boost::mpl::true_ is_specialized;
+    typedef std::true_type is_specialized;
 
     static lua_State* interpreter(handle const& value)
     {
