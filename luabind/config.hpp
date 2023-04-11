@@ -33,11 +33,7 @@
 #endif
 
 
-#if defined (BOOST_MSVC) && (BOOST_MSVC <= 1300)
-	#define LUABIND_MSVC_TYPENAME
-#else
-	#define LUABIND_MSVC_TYPENAME typename
-#endif
+#define LUABIND_MSVC_TYPENAME typename
 
 // the maximum number of arguments of functions that's
 // registered. Must at least be 2

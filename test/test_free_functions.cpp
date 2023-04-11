@@ -96,14 +96,11 @@ void test_main(lua_State* L)
 
         def("f", (int(*)(int)) &f),
         def("f", (int(*)(int, int)) &f),
-        def("create", &create_base, adopt(return_value))
+        def("create", &create_base, adopt(return_value)),
 //        def("set_functor", &set_functor)
             
-#if !(BOOST_MSVC < 1300)
-        ,
         def("test_value_converter", &test_value_converter),
         def("test_pointer_converter", &test_pointer_converter)
-#endif
             
     ];
 
@@ -125,10 +122,8 @@ void test_main(lua_State* L)
     base* ptr = call_function<base*>(L, "lua_create") [ adopt(result) ];
     delete ptr;
 
-#if !(BOOST_MSVC < 1300)
     DOSTRING(L, "test_value_converter('converted string')");
     DOSTRING(L, "test_pointer_converter('converted string')");
-#endif
 
     DOSTRING_EXPECTED(L, "f('incorrect', 'parameters')",
         "No matching overload found, candidates:\n"

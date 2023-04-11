@@ -43,7 +43,6 @@
 
 #include <boost/iterator/iterator_facade.hpp> // iterator
 
-#include <boost/utility/enable_if.hpp>
 
 namespace luabind {
 
@@ -126,7 +125,7 @@ namespace adl
 
   template <class R, class T, class U>
   struct enable_binary
-    : boost::enable_if<
+    : std::enable_if<
           mpl::or_<
               is_object_interface<T>
             , is_object_interface<U>

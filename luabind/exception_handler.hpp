@@ -10,10 +10,6 @@
 # include <optional>
 # include <boost/type.hpp>
 
-# if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
-#  include <boost/mpl/if.hpp>
-# endif
-
 namespace luabind {
 
 # ifndef LUABIND_NO_EXCEPTIONS
@@ -35,18 +31,11 @@ namespace detail
       exception_handler_base* next;
   };
 
-  namespace mpl = boost::mpl;
 
   template<class E, class Handler>
   struct exception_handler : exception_handler_base
   {
-#  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
-      typedef typename mpl::if_<
-          std::is_pointer<E>, E, E const&
-      >::type argument;
-#  else
       typedef E const& argument;
-#  endif
 
       exception_handler(Handler handler)
         : handler(handler)
