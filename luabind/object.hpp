@@ -28,9 +28,8 @@
 #include <boost/mpl/bool.hpp> // value_wrapper_traits specializations
 #include <boost/mpl/apply_wrap.hpp>
 
-# include <tuple>
-
-#include <boost/optional.hpp>
+#include <tuple>
+#include <optional>
 
 #include <luabind/nil.hpp>
 #include <luabind/value_wrapper.hpp>
@@ -977,9 +976,9 @@ namespace detail
   template<class T>
   struct nothrow_error_policy
   {
-      static boost::optional<T> handle_error(lua_State*, type_id const&)
+      static std::optional<T> handle_error(lua_State*, type_id const&)
       {
-          return boost::optional<T>();
+          return {}
       }
   };
 
@@ -1010,26 +1009,26 @@ T object_cast(ValueWrapper const& value_wrapper, Policies const&)
 }
 
 template<class T, class ValueWrapper>
-boost::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper)
+std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper)
 {
     return detail::object_cast_aux(
         value_wrapper
       , (T*)0
       , (detail::null_type*)0
       , (detail::nothrow_error_policy<T>*)0
-      , (boost::optional<T>*)0
+      , (std::optional<T>*)0
     );
 }
 
 template<class T, class ValueWrapper, class Policies>
-boost::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper, Policies const&)
+std::optional<T> object_cast_nothrow(ValueWrapper const& value_wrapper, Policies const&)
 {
     return detail::object_cast_aux(
         value_wrapper
       , (T*)0
       , (Policies*)0
       , (detail::nothrow_error_policy<T>*)0
-      , (boost::optional<T>*)0
+      , (std::optional<T>*)0
     );
 }
 

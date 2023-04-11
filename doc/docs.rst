@@ -1279,16 +1279,16 @@ true value of the table entry.
     T object_cast<T>(object const&, Policies);
 
     template<class T>
-    boost::optional<T> object_cast_nothrow<T>(object const&);
+    std::optional<T> object_cast_nothrow<T>(object const&);
     template<class T, class Policies>
-    boost::optional<T> object_cast_nothrow<T>(object const&, Policies);
+    std::optional<T> object_cast_nothrow<T>(object const&, Policies);
 
 The ``object_cast`` function casts the value of an object to a C++ value.
 You can supply a policy to handle the conversion from lua to C++. If the cast
 cannot be made a ``cast_failed`` exception will be thrown. If you have
 defined LUABIND_NO_ERROR_CHECKING (see `Build options`_) no checking will occur,
 and if the cast is invalid the application may very well crash. The nothrow
-versions will return an uninitialized ``boost::optional<T>`` object, to
+versions will return an uninitialized ``std::optional<T>`` object, to
 indicate that the cast could not be performed.
 
 The function signatures of all of the above functions are really templates
