@@ -56,7 +56,7 @@ namespace detail
   {
       typedef typename boost::mpl::if_<
           boost::is_reference_wrapper<T>
-        , BOOST_DEDUCED_TYPENAME boost::unwrap_reference<T>::type&
+        , typename boost::unwrap_reference<T>::type&
         , T
       >::type unwrapped_type;
 
@@ -67,7 +67,7 @@ namespace detail
       cv.apply(
           interpreter
         , boost::implicit_cast<
-              BOOST_DEDUCED_TYPENAME boost::unwrap_reference<T>::type&
+              typename boost::unwrap_reference<T>::type&
           >(value)
       );
   }
