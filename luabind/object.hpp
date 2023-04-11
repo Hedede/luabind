@@ -126,7 +126,6 @@ namespace adl
 
   template <class R, class T, class U>
   struct enable_binary
-# ifndef BOOST_NO_SFINAE
     : boost::enable_if<
           mpl::or_<
               is_object_interface<T>
@@ -135,11 +134,6 @@ namespace adl
         , R
       >
   {};
-# else
-  {
-      typedef R type;
-  };
-# endif
 
   template<class T, class U>
   int binary_interpreter(lua_State*& L, T const& lhs, U const& rhs

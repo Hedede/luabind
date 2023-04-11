@@ -25,15 +25,6 @@
 #include <luabind/version.hpp>
 #include <memory>
 
-namespace luabind {
-
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-    template<class T>
-    T* get_pointer(std::shared_ptr<T> const& p) { return p.get(); }
-#endif
-
-}
-
 struct base : counted_type<base>
 {
     base(): n(4) {}

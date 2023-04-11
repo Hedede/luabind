@@ -25,13 +25,6 @@
 
 using namespace luabind;
 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-namespace luabind
-{
-  using boost::get_pointer;
-}
-#endif
-
 struct base0
 {
     virtual ~base0() {}

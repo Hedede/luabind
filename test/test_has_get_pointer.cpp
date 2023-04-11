@@ -44,14 +44,6 @@ namespace test
   
 } // namespace test
 
-#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-namespace luabind
-{
-  using test::get_pointer;
-  using boost::get_pointer;
-} // namespace luabind
-#endif
-
 BOOST_MPL_ASSERT(( lb::has_get_pointer<std::shared_ptr<int> > ));
 BOOST_MPL_ASSERT(( lb::has_get_pointer<test::Y> ));
 BOOST_MPL_ASSERT(( lb::has_get_pointer<char*> ));
