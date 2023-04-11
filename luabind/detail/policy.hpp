@@ -136,7 +136,7 @@ namespace luabind { namespace detail
 		static constexpr bool value =
 			sizeof(is_policy_cons_test(t)) == sizeof(yes_t);
 
-		typedef boost::mpl::bool_<value> type;
+		using type = std::integral_constant<bool, value>;
 	};	
 
 	template<bool>

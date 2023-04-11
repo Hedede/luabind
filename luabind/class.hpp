@@ -625,7 +625,7 @@ namespace luabind
         {
             return property_impl(
                 name, g, s
-              , boost::mpl::bool_<detail::is_policy_cons<MaybeSetter>::value>()
+              , std::integral_constant<bool, detail::is_policy_cons<MaybeSetter>::value>()
             );
         }
 
@@ -801,7 +801,7 @@ namespace luabind
 		class_& property_impl(const char* name,
 									 Getter g,
 									 GetPolicies policies,
-									 boost::mpl::bool_<true>)
+									 std::true_type)
 		{
             this->add_member(
                 new detail::property_registration<T, Getter, GetPolicies>(
@@ -813,7 +813,7 @@ namespace luabind
 		class_& property_impl(const char* name,
 									 Getter g,
 									 Setter s,
-									 boost::mpl::bool_<false>)
+									 std::false_type)
 		{
             typedef detail::property_registration<
                 T, Getter, detail::null_type, Setter, detail::null_type

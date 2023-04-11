@@ -112,7 +112,7 @@ namespace adl
             sizeof(is_object_interface_aux::check((T*)0)) == sizeof(yes)
         ;
 
-        typedef mpl::bool_<value> type;
+        using type = std::integral_constant<bool, value>;
     };
 
   } // namespace detail
