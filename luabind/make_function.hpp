@@ -22,7 +22,7 @@ namespace detail
 
 // MSVC complains about member being sensitive to alignment (C4121)
 // when F is a pointer to member of a class with virtual bases.
-# ifdef BOOST_MSVC
+# ifdef _MSC_VER
 #  pragma pack(push)
 #  pragma pack(16)
 # endif
@@ -88,7 +88,7 @@ namespace detail
       Policies policies;
   };
 
-# ifdef BOOST_MSVC
+# ifdef _MSC_VER
 #  pragma pack(pop)
 # endif
 

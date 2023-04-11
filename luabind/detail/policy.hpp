@@ -660,12 +660,12 @@ struct default_converter<type> \
     \
     type from(lua_State* L, int index) \
     { \
-        return static_cast<type>(BOOST_PP_CAT(lua_to, kind)(L, index)); \
+        return static_cast<type>(LUABIND_CAT(lua_to, kind)(L, index)); \
     } \
     \
     void to(lua_State* L, type const& value) \
     { \
-        BOOST_PP_CAT(lua_push, kind)(L, BOOST_PP_CAT(as_lua_, kind)(value)); \
+        LUABIND_CAT(lua_push, kind)(L, LUABIND_CAT(as_lua_, kind)(value)); \
     } \
 }; \
 \

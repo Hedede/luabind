@@ -44,10 +44,10 @@ namespace test
   
 } // namespace test
 
-BOOST_MPL_ASSERT(( lb::has_get_pointer<std::shared_ptr<int> > ));
-BOOST_MPL_ASSERT(( lb::has_get_pointer<test::Y> ));
-BOOST_MPL_ASSERT(( lb::has_get_pointer<char*> ));
-BOOST_MPL_ASSERT_NOT(( lb::has_get_pointer<int> ));
-BOOST_MPL_ASSERT_NOT(( lb::has_get_pointer<test::X> ));
-BOOST_MPL_ASSERT(( lb::has_get_pointer<test::Z*> ));
+static_assert( lb::has_get_pointer<std::shared_ptr<int> >::value );
+static_assert( lb::has_get_pointer<test::Y>::value );
+static_assert( lb::has_get_pointer<char*>::value );
+static_assert(! lb::has_get_pointer<int>::value );
+static_assert(! lb::has_get_pointer<test::X>::value );
+static_assert( lb::has_get_pointer<test::Z*>::value );
 

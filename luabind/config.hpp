@@ -24,9 +24,7 @@
 #ifndef LUABIND_CONFIG_HPP_INCLUDED
 #define LUABIND_CONFIG_HPP_INCLUDED
 
-#include <boost/config.hpp>
-
-#ifdef BOOST_MSVC
+#ifdef _MSC_VER
 	#define LUABIND_ANONYMOUS_FIX static
 #else
 	#define LUABIND_ANONYMOUS_FIX
@@ -82,7 +80,7 @@
 // C code has undefined behavior, lua is written in C).
 
 #ifdef LUABIND_DYNAMIC_LINK
-# ifdef BOOST_WINDOWS
+# ifdef _MSC_VER
 #  ifdef LUABIND_BUILDING
 #   define LUABIND_API __declspec(dllexport)
 #  else
@@ -98,6 +96,9 @@
 #ifndef LUABIND_API
 # define LUABIND_API
 #endif
+
+#define LUABIND_CAT(x, y)   LUABIND_CONCAT_(x, y)
+#define LUABIND_CAT_(x, y)  x##y
 
 namespace luabind {
 

@@ -23,7 +23,6 @@
 #ifndef TEST_050415_HPP
 #define TEST_050415_HPP
 
-#include <boost/preprocessor/cat.hpp>
 #include <luabind/error.hpp>
 
 extern "C" 
@@ -39,13 +38,13 @@ void report_failure(char const* str, char const* file, int line);
 #define COUNTER_GUARD(x)
 #else
 #define COUNTER_GUARD(type) \
-    struct BOOST_PP_CAT(type, _counter_guard) \
+    struct LUABIND_CAT(type, _counter_guard) \
     { \
-        ~BOOST_PP_CAT(type, _counter_guard()) \
+        ~LUABIND_CAT(type, _counter_guard()) \
         { \
             TEST_CHECK(counted_type<type>::count == 0); \
         } \
-    } BOOST_PP_CAT(type, _guard)
+    } LUABIND_CAT(type, _guard)
 #endif
 
 #define TEST_REPORT_AUX(x, line, file) \

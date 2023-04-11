@@ -22,7 +22,6 @@
 
 #include <luabind/value_wrapper.hpp>
 #include <luabind/object.hpp>
-#include <boost/mpl/assert.hpp>
 
 struct X_tag;
 
@@ -42,20 +41,20 @@ namespace luabind
 
 } // namespace luabind
 
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper<X> ));
-BOOST_MPL_ASSERT_NOT(( luabind::is_value_wrapper<X&> ));
-BOOST_MPL_ASSERT_NOT(( luabind::is_value_wrapper<X const&> ));
+static_assert( luabind::is_value_wrapper<X>::value );
+static_assert(! luabind::is_value_wrapper<X&>::value );
+static_assert(! luabind::is_value_wrapper<X const&>::value );
 
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<X> ));
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<X const> ));
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<X&> ));
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<X const&> ));
-BOOST_MPL_ASSERT_NOT(( luabind::is_value_wrapper_arg<int> ));
-BOOST_MPL_ASSERT_NOT(( luabind::is_value_wrapper_arg<int[4]> ));
+static_assert( luabind::is_value_wrapper_arg<X>::value );
+static_assert( luabind::is_value_wrapper_arg<X const>::value );
+static_assert( luabind::is_value_wrapper_arg<X&>::value );
+static_assert( luabind::is_value_wrapper_arg<X const&>::value );
+static_assert(! luabind::is_value_wrapper_arg<int>::value );
+static_assert(! luabind::is_value_wrapper_arg<int[4]>::value );
 
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<X const&> ));
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<luabind::object&> ));
-BOOST_MPL_ASSERT(( luabind::is_value_wrapper_arg<luabind::object const&> ));
+static_assert( luabind::is_value_wrapper_arg<X const&>::value );
+static_assert( luabind::is_value_wrapper_arg<luabind::object&>::value );
+static_assert( luabind::is_value_wrapper_arg<luabind::object const&>::value );
 
 int main()
 {
