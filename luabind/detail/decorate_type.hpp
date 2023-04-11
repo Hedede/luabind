@@ -30,8 +30,6 @@
 namespace luabind { namespace detail
 {
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-
 	template<class T>
 	struct decorated_type
 	{
@@ -93,120 +91,6 @@ namespace luabind { namespace detail
 	by_const_reference<T> decorated_type<const T&>::t;
 
 	#define LUABIND_DECORATE_TYPE(t) luabind::detail::decorated_type<t>::get()
-
-#else
-
-
-	namespace
-	{
-		LUABIND_ANONYMOUS_FIX char decorated_type_array[64];
-	}
-
-	template<class T>
-	struct decorated_type_cref_impl
-	{
-		static void(*data())(T)
-		{ return (void(*)(T))0; }
-
-		template<class U>
-		static by_const_reference<U> get(void(*f)(const U&))
-		{ return by_const_reference<U>(); }
-	};
-
-	template<class T>
-	struct decorated_type_ref_impl
-	{
-		static void(*data())(T)
-		{ return (void(*)(T))0; }
-
-		template<class U>
-		static by_reference<U> get(void(*)(U&))
-		{ return by_reference<U>(); }
-	};
-
-	template<class T>
-	struct decorated_type_cptr_impl
-	{
-		static void(*data())(T)
-		{ return (void(*)(T))0; }
-
-		template<class U>
-		static by_const_pointer<U> get(void(*)(const U*))
-		{ return by_const_pointer<U>(); }
-	};
-
-	template<class T>
-	struct decorated_type_ptr_impl
-	{
-		static void(*data())(T)
-		{ return (void(*)(T))0; }
-
-		template<class U>
-		static by_pointer<U> get(void(*)(U*))
-		{ return by_pointer<U>(); }
-	};
-
-	template<class T>
-	struct decorated_type_value_impl
-	{
-		static void(*data())(T&)
-		{ return (void(*)(T&))0; }
-
-		template<class U>
-		static by_value<U> get(void(*)(U&))
-		{ return by_value<U>(); }
-	};
-
-	template<>
-	struct decorated_type_value_impl<void>
-	{
-		static by_value<void> get(int)
-		{
-			return by_value<void>();
-		}
-		static int data() { return 0; }
-	};
-
-	template<class T>
-	struct decorated_type_array_impl
-	{
-		template<class U>
-		static by_pointer<U> get(U*)
-		{
-			return by_pointer<U>();
-		}
-
-		template<class U>
-		static by_pointer<U> get(void(*)(U))
-		{ return by_pointer<U>(); }
-
-		static T& data() { return reinterpret_cast<T&>(decorated_type_array); }
-	};
-
-	template<class T>
-	struct decorated_type
-//		: boost::mpl::if_<boost::is_array<T>
-//			,	decorated_type_array_impl<T>
-		:		boost::mpl::if_<luabind::detail::is_const_reference<T>
-					, decorated_type_cref_impl<T>
-					, typename boost::mpl::if_<luabind::detail::is_nonconst_reference<T>
-						, decorated_type_ref_impl<T>
-						, typename boost::mpl::if_<luabind::detail::is_nonconst_pointer<T>
-							, decorated_type_ptr_impl<T>
-							, typename boost::mpl::if_<luabind::detail::is_const_pointer<T>
-								, decorated_type_cptr_impl<T>
-								, decorated_type_value_impl<T>
-					>::type
-				>::type
-			>::type
-		>::type
-//	>::type
-	{
-	};
-
-	#define LUABIND_DECORATE_TYPE(t) luabind::detail::decorated_type<t>::get(luabind::detail::decorated_type<t>::data())
-
-#endif
 
 }}
 
