@@ -23,9 +23,7 @@
 #ifndef LUABIND_VALUE_WRAPPER_050419_HPP
 #define LUABIND_VALUE_WRAPPER_050419_HPP
 
-#include <boost/mpl/integral_c.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/aux_/msvc_eti_base.hpp>
+#include <type_traits>
 
 namespace luabind {
 
@@ -41,9 +39,7 @@ struct value_wrapper_traits
 
 template<class T>
 struct is_value_wrapper
-  : boost::mpl::aux::msvc_eti_base<
-        typename value_wrapper_traits<T>::is_specialized
-    >::type
+  : typename value_wrapper_traits<T>::is_specialized
 {};
 
 template<class T>
