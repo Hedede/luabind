@@ -23,15 +23,22 @@
 #ifndef LUABIND_GET_POINTER_051023_HPP
 # define LUABIND_GET_POINTER_051023_HPP
 
-//
-// We need these overloads in the luabind namespace.
-//
-
-# include <boost/get_pointer.hpp>
-
 namespace luabind {
 
-using boost::get_pointer;
+template<class T> T * get_pointer(T * p)
+{
+    return p;
+}
+
+template<class T> T * get_pointer( std::unique_ptr<T> const& p )
+{
+    return p.get();
+}
+
+template<class T> T * get_pointer( std::shared_ptr<T> const& p )
+{
+    return p.get();
+}
 
 } // namespace luabind
 

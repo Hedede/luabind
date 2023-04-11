@@ -35,7 +35,7 @@ struct construct<T, Pointer, vector<R, Self, Args...> >
     {
         object_rep* self = touserdata<object_rep>(self_);
 
-        std::auto_ptr<T> instance(new T(args...));
+        std::unique_ptr<T> instance(new T(args...));
         inject_backref(self_.interpreter(), instance.get(), instance.get());
 
         void* naked_ptr = instance.get();
