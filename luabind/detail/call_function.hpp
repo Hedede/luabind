@@ -25,10 +25,6 @@
 
 #include <luabind/config.hpp>
 
-#include <boost/mpl/if.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/mpl/or.hpp>
-
 #include <luabind/error.hpp>
 #include <luabind/detail/convert_to_lua.hpp>
 #include <luabind/detail/pcall.hpp>
@@ -102,7 +98,7 @@ namespace luabind
 
 				operator Ret()
 				{
-					typename mpl::apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
+					typename apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
 					lua_State* L = m_state;
@@ -148,7 +144,7 @@ namespace luabind
 				Ret operator[](const Policies& p)
 				{
 					typedef typename detail::find_conversion_policy<0, Policies>::type converter_policy;
-					typename mpl::apply_wrap2<converter_policy,Ret,lua_to_cpp>::type converter;
+					typename apply_wrap2<converter_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
 					lua_State* L = m_state;

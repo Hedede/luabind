@@ -24,7 +24,6 @@
 #define OPERATOR_040729_HPP
 
 #include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/apply_wrap.hpp>
 #include <luabind/detail/other.hpp>
 #include <luabind/raw_policy.hpp>
 
@@ -183,7 +182,7 @@ struct identity { typedef T type; };
           , Policies
         >::type cv_policy;
 
-        typename mpl::apply_wrap2<cv_policy,T,cpp_to_lua>::type cv;
+        typename apply_wrap2<cv_policy,T,cpp_to_lua>::type cv;
 
         cv.apply(L, x);
     }

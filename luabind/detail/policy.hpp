@@ -60,6 +60,7 @@
 
 namespace luabind
 {
+
 	namespace detail
 	{
 		struct conversion_policy_base {};
@@ -92,6 +93,16 @@ namespace luabind
 
 namespace luabind { namespace detail
 {
+	template< typename F, typename T1 >
+	struct apply_wrap1
+	    : F::template apply<T1>
+	{ };
+
+	template<typename F, typename T1, typename T2>
+	struct apply_wrap2
+	    : F::template apply< T1,T2 >
+	{ };
+
 	template<class H, class T>
 	struct policy_cons
 	{

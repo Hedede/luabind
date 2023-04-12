@@ -70,14 +70,14 @@ template <int N, class T, class Policies>
 struct make_arg_converter
 {
     typedef typename find_conversion_policy<N + 1, Policies>::type generator;
-    typedef typename mpl::apply_wrap2<generator, T, lua_to_cpp>::type type;
+    typedef typename apply_wrap2<generator, T, lua_to_cpp>::type type;
 };
 
 template <class R, class Policies>
 struct make_result_converter
 {
     typedef typename find_conversion_policy<0, Policies>::type generator;
-    typedef typename mpl::apply_wrap2<generator, R, cpp_to_lua>::type type;
+    typedef typename apply_wrap2<generator, R, cpp_to_lua>::type type;
 };
 
 struct void_result

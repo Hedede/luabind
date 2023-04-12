@@ -26,7 +26,6 @@
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
-#include <boost/mpl/apply_wrap.hpp>
 
 namespace luabind { namespace detail {
 
@@ -46,7 +45,7 @@ namespace luabind { namespace detail {
 			typedef typename T::value_type value_type;
 
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,value_type,lua_to_cpp>::type converter;
+			typename apply_wrap2<converter_policy,value_type,lua_to_cpp>::type converter;
 
 			T container;
 
@@ -85,7 +84,7 @@ namespace luabind { namespace detail {
 			typedef typename T::value_type value_type;
 
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,value_type,lua_to_cpp>::type converter;
+			typename apply_wrap2<converter_policy,value_type,lua_to_cpp>::type converter;
 
 			lua_newtable(L);
 

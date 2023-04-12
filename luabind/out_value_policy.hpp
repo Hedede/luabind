@@ -26,7 +26,6 @@
 
 #include <luabind/config.hpp>
 #include <luabind/detail/policy.hpp>
-#include <boost/mpl/apply_wrap.hpp>
 
 namespace luabind { namespace detail
 {
@@ -71,7 +70,7 @@ namespace luabind { namespace detail
 		T& apply(lua_State* L, by_reference<T>, int index)
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
+			typename apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
 			new (m_storage) T(converter.apply(L, LUABIND_DECORATE_TYPE(T), index));
 			return *reinterpret_cast<T*>(m_storage);
 		}
@@ -80,7 +79,7 @@ namespace luabind { namespace detail
 		static int match(lua_State* L, by_reference<T>, int index)
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typedef typename mpl::apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
+			typedef typename apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
 			return converter::match(L, LUABIND_DECORATE_TYPE(T), index);
 		}
 
@@ -88,7 +87,7 @@ namespace luabind { namespace detail
 		void converter_postcall(lua_State* L, by_reference<T>, int) 
 		{
 			typedef typename find_conversion_policy<2, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
+			typename apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
 			converter.apply(L, *reinterpret_cast<T*>(m_storage));
 			reinterpret_cast<T*>(m_storage)->~T();
 		}
@@ -97,7 +96,7 @@ namespace luabind { namespace detail
 		T* apply(lua_State* L, by_pointer<T>, int index)
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
+			typename apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
 			new (m_storage) T(converter.apply(L, LUABIND_DECORATE_TYPE(T), index));
 			return reinterpret_cast<T*>(m_storage);
 		}
@@ -106,7 +105,7 @@ namespace luabind { namespace detail
 		static int match(lua_State* L, by_pointer<T>, int index)
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typedef typename mpl::apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
+			typedef typename apply_wrap2<converter_policy,T,lua_to_cpp>::type converter;
 			return converter::match(L, LUABIND_DECORATE_TYPE(T), index);
 		}
 
@@ -114,7 +113,7 @@ namespace luabind { namespace detail
 		void converter_postcall(lua_State* L, by_pointer<T>, int)
 		{
 			typedef typename find_conversion_policy<2, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
+			typename apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
 			converter.apply(L, *reinterpret_cast<T*>(m_storage));
 			reinterpret_cast<T*>(m_storage)->~T();
 		}
@@ -169,7 +168,7 @@ namespace luabind { namespace detail
 		void converter_postcall(lua_State* L, by_reference<T>, int) 
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
+			typename apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
 			converter.apply(L, *reinterpret_cast<T*>(m_storage));
 			reinterpret_cast<T*>(m_storage)->~T();
 		}
@@ -191,7 +190,7 @@ namespace luabind { namespace detail
 		void converter_postcall(lua_State* L, by_pointer<T>, int) 
 		{
 			typedef typename find_conversion_policy<1, Policies>::type converter_policy;
-			typename mpl::apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
+			typename apply_wrap2<converter_policy,T,cpp_to_lua>::type converter;
 			converter.apply(L, *reinterpret_cast<T*>(m_storage));
 			reinterpret_cast<T*>(m_storage)->~T();
 		}

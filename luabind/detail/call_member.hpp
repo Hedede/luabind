@@ -30,9 +30,7 @@
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/object.hpp> // TODO: REMOVE DEPENDENCY
 
-# include <tuple>
-
-#include <boost/mpl/apply_wrap.hpp>
+#include <tuple>
 
 namespace luabind
 {
@@ -97,7 +95,7 @@ namespace luabind
 
 				operator Ret()
 				{
-					typename mpl::apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
+					typename apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
 
@@ -148,7 +146,7 @@ namespace luabind
 				Ret operator[](const Policies& p)
 				{
 					typedef typename find_conversion_policy<0, Policies>::type converter_policy;
-					typename mpl::apply_wrap2<converter_policy,Ret,lua_to_cpp>::type converter;
+					typename apply_wrap2<converter_policy,Ret,lua_to_cpp>::type converter;
 
 					m_called = true;
 

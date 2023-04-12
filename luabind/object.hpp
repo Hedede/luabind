@@ -24,11 +24,10 @@
 #define LUABIND_OBJECT_050419_HPP
 
 #include <boost/implicit_cast.hpp> // detail::push()
-#include <boost/mpl/bool.hpp> // value_wrapper_traits specializations
-#include <boost/mpl/apply_wrap.hpp>
 
 #include <tuple>
 #include <optional>
+#include <type_traits>
 
 #include <luabind/nil.hpp>
 #include <luabind/value_wrapper.hpp>
@@ -58,7 +57,7 @@ namespace detail
 		T
 	>
 
-      typename mpl::apply_wrap2<
+      typename apply_wrap2<
           ConverterGenerator,unwrapped_type,cpp_to_lua
       >::type cv;
 
@@ -897,7 +896,7 @@ namespace detail
         , Policies
       >::type converter_generator;
 
-      typename mpl::apply_wrap2<converter_generator, T, lua_to_cpp>::type cv;
+      typename apply_wrap2<converter_generator, T, lua_to_cpp>::type cv;
 
       if (cv.match(interpreter, LUABIND_DECORATE_TYPE(T), -1) < 0)
       {
