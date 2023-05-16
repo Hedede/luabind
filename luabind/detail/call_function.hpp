@@ -70,18 +70,13 @@ namespace luabind
 				{
 					if (m_called) return;
 
-					call(0);
-				}
-
-				void call(int n)
-				{
 					m_called = true;
 					lua_State* L = m_state;
 
 					int top = lua_gettop(L);
 
 					push_args_from_tuple<1>::apply(L, m_args);
-					if (m_fun(L, std::tuple_size<Tuple>::value, n))
+					if (m_fun(L, std::tuple_size<Tuple>::value, 0))
 					{
 						assert(lua_gettop(L) == top - m_params + 1);
 #ifndef LUABIND_NO_EXCEPTIONS
@@ -89,9 +84,9 @@ namespace luabind
 #else
 						error_callback_fun e = get_error_callback();
 						if (e) e(L);
-	
+
 						assert(0 && "the lua function threw an error and exceptions are disabled."
-								" If you want to handle the error you can use luabind::set_error_callback()");
+									" If you want to handle the error you can use luabind::set_error_callback()");
 						std::terminate();
 #endif
 					}
@@ -104,9 +99,30 @@ namespace luabind
 				{
 					typename apply_wrap2<default_policy,Ret,lua_to_cpp>::type converter;
 
-					call(1);
-
+					m_called = true;
 					lua_State* L = m_state;
+
+					int top = lua_gettop(L);
+
+					push_args_from_tuple<1>::apply(L, m_args);
+					if (m_fun(L, std::tuple_size<Tuple>::value, 1))
+					{
+						assert(lua_gettop(L) == top - m_params + 1);
+#ifndef LUABIND_NO_EXCEPTIONS
+						throw luabind::error(L); 
+#else
+						error_callback_fun e = get_error_callback();
+						if (e) e(L);
+
+						assert(0 && "the lua function threw an error and exceptions are disabled."
+								" If you want to handle the error you can use luabind::set_error_callback()");
+						std::terminate();
+#endif
+					}
+
+					// pops the return values from the function call
+					stack_pop pop(L, lua_gettop(L) - top + m_params);
+
 					if (converter.match(L, LUABIND_DECORATE_TYPE(Ret), -1) < 0)
 					{
 #ifndef LUABIND_NO_EXCEPTIONS
