@@ -167,10 +167,10 @@ namespace luabind { namespace detail
         }
     }
 
-    template <class T>
-    void make_pointee_instance(lua_State* L, T& x, std::false_type, std::true_type)
+    template <class Ref, typename T = std::remove_reference_t<Ref>>
+    void make_pointee_instance(lua_State* L, Ref&& x, std::false_type, std::true_type)
     {
-        std::unique_ptr<T> ptr(new T(x));
+        std::unique_ptr<T> ptr(new T(std::forward<Ref>(x)));
         make_instance(L, std::move(ptr));
     }
 
@@ -181,9 +181,9 @@ namespace luabind { namespace detail
     }
 
     template <class T, class Clone>
-    void make_pointee_instance(lua_State* L, T& x, Clone)
+    void make_pointee_instance(lua_State* L, T&& x, Clone)
     {
-        make_pointee_instance(L, x, has_get_pointer<T>(), Clone());
+        make_pointee_instance(L, std::forward<T>(x), has_get_pointer<T>(), Clone());
     }
 
 // ********** pointer converter ***********

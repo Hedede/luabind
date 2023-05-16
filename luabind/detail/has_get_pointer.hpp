@@ -27,7 +27,7 @@
 
 #  include <memory>
 
-namespace luabind { namespace detail { 
+namespace luabind { namespace detail {
 
 template<class T, class = void>
 struct has_get_pointer : std::false_type {};

@@ -21,7 +21,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #ifndef LUABIND_GET_POINTER_051023_HPP
-# define LUABIND_GET_POINTER_051023_HPP
+#define LUABIND_GET_POINTER_051023_HPP
+
+#include <memory>
 
 namespace luabind {
 
