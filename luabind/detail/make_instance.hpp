@@ -81,13 +81,13 @@ void make_instance(lua_State* L, P p)
 
     object_rep* instance = push_new_instance(L, cls);
 
-    typedef pointer_holder<P> holder_type;
+    using holder_type = pointer_holder<P> ;
 
     void* storage = instance->allocate(sizeof(holder_type));
 
     try
     {
-        new (storage) holder_type(p, dynamic.first, dynamic.second);
+        new (storage) holder_type(std::move(p), dynamic.first, dynamic.second);
     }
     catch (...)
     {

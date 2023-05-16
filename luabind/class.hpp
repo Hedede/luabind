@@ -161,27 +161,6 @@ namespace luabind
           : std::true_type
         {};
 
-        template <class P>
-        struct is_unspecified_mfn
-        {
-            template <class T>
-            struct apply
-              : is_unspecified<T, P>
-            {};
-        };
-
-	template< typename T , int not_le_ = 0 >
-	struct protect : T
-	{
-		typedef protect type;
-	};
-
-	template<class Predicate>
-	struct get_predicate
-	{
-		using type = protect<is_unspecified_mfn<Predicate> >;
-	};
-
         template <class Result, class Default>
         struct result_or_default
         {
@@ -194,15 +173,14 @@ namespace luabind
             typedef Default type;
         };
 
-		template<class Parameters, class Predicate, class DefaultValue>
-		struct extract_parameter
-		{
-			typedef typename get_predicate<Predicate>::type pred;
-			typedef typename find_if<Parameters, pred>::type iterator;
-            typedef typename result_or_default<
-                typename iterator::type, DefaultValue
-            >::type type;
-		};
+        template<class Parameters, class Predicate, class DefaultValue>
+        struct extract_parameter
+        {
+            using pred = is_unspecified<_1, Predicate>;
+            using iterator = typename find_if<pred, Parameters>::type;
+
+            using type = typename result_or_default< iterator, DefaultValue >::type;
+        };
 
 		// prints the types of the values on the stack, in the
 		// range [start_index, lua_gettop()]
@@ -350,7 +328,7 @@ namespace luabind
 
         template <class T>
         struct reference_result
-          : std::conditional_t<
+          : std::conditional<
                 std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_lvalue_reference_t<T>
@@ -359,7 +337,7 @@ namespace luabind
 
         template <class T>
         struct reference_argument
-          : std::conditional_t<
+          : std::conditional<
                 std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_lvalue_reference_t<
@@ -370,7 +348,7 @@ namespace luabind
 
         template <class T, class Policies>
         struct inject_dependency_policy
-          : std::conditional_t<
+          : std::conditional<
                 std::disjunction_v<
                     is_primitive<T>
                   , has_policy<Policies, detail::no_dependency_policy>
@@ -497,11 +475,11 @@ namespace luabind
         using parameters_type = vector<X1, X2, X3, detail::unspecified>;
 
 		// WrappedType MUST inherit from T
-		typedef typename detail::extract_parameter<
+		using WrappedType = typename detail::extract_parameter<
 		    parameters_type
 		  , std::is_base_of<T, _1>
 		  , detail::null_type
-		>::type WrappedType;
+		>::type ;
 
 		using HeldType = typename detail::extract_parameter<
 		    parameters_type

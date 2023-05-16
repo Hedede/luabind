@@ -56,10 +56,15 @@ struct expand_r<F<Ts...>, Args...> {
 template<typename Pred>
 struct find_type {
 	template<typename T>
-	using F = typename expand<Pred, T>::type;
+	using F = typename expand_r<Pred, T>::type;
 
 	template <typename...Ts>
 	struct result {
+	};
+
+	template <typename T>
+	struct result<T> {
+		using type = T;
 	};
 
 	template <typename T, typename...Ts>
@@ -89,8 +94,20 @@ using expand_r = typename detail::expand_r<F,Args...>::type;
 template<typename F, typename...Args>
 using apply = typename expand<F,Args...>::type;
 
-template<typename Pred, typename...Ts>
-using find_if = typename detail::find_type<Pred>::template result<Ts...>::type;
+namespace detail {
+
+template<typename Pred, typename Vector>
+struct find_if;
+
+template<typename Pred, template<typename...> class Vector, typename...Ts>
+struct find_if<Pred,Vector<Ts...>> : detail::find_type<Pred>::template result<Ts...>
+{
+};
+
+} // namespace detail
+
+template<typename Pred, typename Vector>
+using find_if = typename detail::find_if<Pred, Vector>::type;
 
 
 namespace detail {

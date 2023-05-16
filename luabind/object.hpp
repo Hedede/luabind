@@ -456,7 +456,6 @@ namespace detail
 
       adl::object key() const;
 
-  private:
       basic_iterator& operator++()
       {
               increment();
@@ -468,6 +467,16 @@ namespace detail
               return dereference();
       }
 
+      friend bool operator==(const basic_iterator& a, const basic_iterator& b)
+      {
+          return a.equal(b);
+      }
+      friend bool operator!=(const basic_iterator& a, const basic_iterator& b)
+      {
+          return !a.equal(b);
+      }
+
+  private:
       void increment()
       {
           m_table.push(m_interpreter);
