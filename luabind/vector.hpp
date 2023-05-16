@@ -5,11 +5,7 @@
 #ifndef LUABIND_VECTOR_100629_HPP
 # define LUABIND_VECTOR_100629_HPP
 
-
-#  include <boost/mpl/fold.hpp>
-#  include <boost/mpl/begin_end_fwd.hpp>
-#  include <boost/mpl/front_fwd.hpp>
-#  include <boost/mpl/size_fwd.hpp>
+#include "detail/fold.hpp"
 
 namespace luabind {
 
@@ -39,51 +35,6 @@ namespace detail
   struct vector_iterator<>
   {};
 
-} // namespace detail
-
-} // namespace luabind
-
-namespace boost { namespace mpl
-{
-
-  // MPL sequence adaption layer to ease the transition to C++0x.
-
-  template <class... Args>
-  struct begin<luabind::vector<Args...> >
-  {
-      typedef luabind::detail::vector_iterator<Args...> type;
-  };
-
-  template <class... Args>
-  struct end<luabind::vector<Args...> >
-  {
-      typedef luabind::detail::vector_iterator<> type;
-  };
-
-  template <class... Args>
-  struct size<luabind::vector<Args...> >
-    : long_<sizeof...(Args)>
-  {};
-
-  template <class Head, class... Tail>
-  struct front<luabind::vector<Head, Tail...> >
-  {
-      typedef Head type;
-  };
-
-  template <class Head, class... Tail>
-  struct deref<luabind::detail::vector_iterator<Head, Tail...> >
-  {
-      typedef Head type;
-  };
-
-}} // namespace boost::mpl
-
-
-namespace luabind { namespace detail
-{
-
-
   struct append_vector
   {
       template <class V, class T>
@@ -97,8 +48,7 @@ namespace luabind { namespace detail
   };
 
   template <class Sequence>
-  struct as_vector
-    : boost::mpl::fold<Sequence, vector<>, append_vector>
+  struct as_vector : fold<Sequence, vector<>, append_vector>
   {};
 
   template <class... Args>

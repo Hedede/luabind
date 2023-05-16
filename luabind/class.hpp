@@ -438,7 +438,7 @@ namespace luabind
                 return make_function(
                     L
                   , access_member_ptr<T, D, result_type>(mem_ptr)
-                  , mpl::vector2<result_type, Class const&>()
+                  , vector<result_type, Class const&>()
                   , policies()
                 );
             }
@@ -458,7 +458,7 @@ namespace luabind
                 return make_function(
                     L
                   , access_member_ptr<T, D>(mem_ptr)
-                  , mpl::vector3<void, Class&, argument_type>()
+                  , vector<void, Class&, argument_type>()
                   , set_policies
                 );
             }
@@ -503,7 +503,7 @@ namespace luabind
 
 	public:
 
-        typedef boost::mpl::vector4<X1, X2, X3, detail::unspecified> parameters_type;
+        using parameters_type = vector<X1, X2, X3, detail::unspecified>;
 
 		// WrappedType MUST inherit from T
 		typedef typename detail::extract_parameter<
