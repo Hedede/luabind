@@ -30,7 +30,7 @@ struct conversion_storage
     // Unfortunately the converters currently doesn't have access to
     // the actual type being converted when this is instantiated, so
     // we have to guess a max size.
-    alignas<32> unsigned char[128] data;
+    alignas(32) unsigned char data[128];
     destruction_function destructor;
 };
 
