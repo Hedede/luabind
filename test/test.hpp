@@ -32,6 +32,8 @@ extern "C"
     #include "lualib.h"
 }
 
+inline lua_State* lua_open() { return luaL_newstate(); }
+
 void report_failure(char const* str, char const* file, int line);
 
 #if defined(_MSC_VER)

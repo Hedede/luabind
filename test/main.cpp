@@ -109,7 +109,7 @@ bool tests_failure = false;
 
 void report_failure(char const* err, char const* file, int line)
 {
-	std::cerr << file << ":" << line << "\"" << err << "\"\n";
+	std::cerr << "failure:" << file << ":" << line << "\"" << err << "\"\n";
 	tests_failure = true;
 }
 

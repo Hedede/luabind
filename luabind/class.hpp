@@ -176,7 +176,7 @@ namespace luabind
         template<class Parameters, class Predicate, class DefaultValue>
         struct extract_parameter
         {
-            using pred = is_unspecified<_1, Predicate>;
+            using pred = is_unspecified<detail::_1, Predicate>;
             using iterator = typename find_if<pred, Parameters>::type;
 
             using type = typename result_or_default< iterator, DefaultValue >::type;
@@ -477,7 +477,7 @@ namespace luabind
 		// WrappedType MUST inherit from T
 		using WrappedType = typename detail::extract_parameter<
 		    parameters_type
-		  , std::is_base_of<T, _1>
+		  , std::is_base_of<T, detail::_1>
 		  , detail::null_type
 		>::type ;
 
@@ -485,9 +485,9 @@ namespace luabind
 		    parameters_type
 		  , std::negation<
 		        std::disjunction<
-                    detail::is_bases<_1>
-                  , std::is_base_of<_1, T>
-                  , std::is_base_of<T, _1>
+                    detail::is_bases<detail::_1>
+                  , std::is_base_of<detail::_1, T>
+                  , std::is_base_of<T, detail::_1>
 				>
 			>
 		  , detail::null_type
@@ -742,8 +742,8 @@ namespace luabind
 			typedef typename detail::extract_parameter<
 					parameters_type
 				,	std::disjunction<
-							detail::is_bases<_1>
-						,	std::is_base_of<_1, T>
+							detail::is_bases<detail::_1>
+						,	std::is_base_of<detail::_1, T>
 					>
 				,	no_bases
 			>::type bases_t;

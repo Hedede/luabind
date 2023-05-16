@@ -28,6 +28,7 @@
 #include <luabind/wrapper_base.hpp>
 #include <luabind/detail/policy.hpp>
 #include <luabind/back_reference_fwd.hpp>
+#include <luabind/mpl.hpp>
 #include <luabind/wrapper_base.hpp>
 
 namespace luabind { namespace detail 
@@ -134,9 +135,9 @@ namespace luabind { namespace detail
 		{
 			typedef luabind::detail::is_nonconst_pointer<T> is_nonconst_p;
 			using type = std::conditional_t<
-                is_nonconst_p::value
-              , adopt_pointer<Pointer, Direction>
-              , only_accepts_nonconst_pointers>
+				is_nonconst_p::value,
+				adopt_pointer<Pointer, Direction>,
+				only_accepts_nonconst_pointers>;
 		};
 	};
 

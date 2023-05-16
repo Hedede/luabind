@@ -155,11 +155,11 @@ namespace luabind { namespace detail
 	
 
     template <class T, class Clone>
-    void make_pointee_instance(lua_State* L, T& x, std::true_type, Clone)
+    void make_pointee_instance(lua_State* L, T&& x, std::true_type, Clone)
     {
         if (get_pointer(x))
         {
-            make_instance(L, x);
+            make_instance(L, std::forward<T>(x));
         }
         else
         {
@@ -269,7 +269,7 @@ namespace luabind { namespace detail
 			if (luabind::get_back_reference(L, x))
 				return;
 
-            make_pointee_instance(L, x, std::true_type());
+			make_pointee_instance(L, std::move(x), std::true_type());
 		}
 
 		template<class T>
@@ -1039,6 +1039,11 @@ template< int I > struct is_placeholder< arg<I> (*) () >
 
   static arg<0> return_value;
   static arg<0> result;
+  static arg<1> _1;
+  static arg<2> _2;
+  static arg<3> _3;
+  static arg<4> _4;
+  static arg<5> _5;
 # define LUABIND_PLACEHOLDER_ARG(N) arg<N>
 }}
 

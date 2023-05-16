@@ -5,12 +5,12 @@
 // https://github.com/absurdworlds/awlib/blob/master/meta/include/aw/meta/expand.h
 // https://github.com/absurdworlds/awlib/blob/master/meta/include/aw/meta/fold.h
 namespace luabind {
+namespace detail {
 
 struct _1 {};
 struct _2 {};
 struct _3 {};
 
-namespace detail {
 template<typename F, typename...Args>
 struct fill_placeholders {
 	using type = F;
