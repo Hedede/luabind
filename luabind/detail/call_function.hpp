@@ -320,8 +320,7 @@ typename detail::make_proxy<R, Args...>::type call_function(
 {
     assert(name && "luabind::call_function() expects a function name");
 
-    lua_pushstring(L, name);
-    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_getglobal(L, name);
 
     typedef typename detail::make_proxy<R, Args...>::type proxy_type;
     return proxy_type(L, 1, &detail::pcall, std::tuple<Args const*...>(&args...));
@@ -344,8 +343,7 @@ typename detail::make_proxy<R, Args...>::type resume_function(
 {
     assert(name && "luabind::call_function() expects a function name");
 
-    lua_pushstring(L, name);
-    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_getglobal(L, name);
 
     typedef typename detail::make_proxy<R, Args...>::type proxy_type;
     return proxy_type(L, 1, &detail::resume_impl, std::tuple<Args const*...>(&args...));
