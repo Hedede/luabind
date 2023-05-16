@@ -29,8 +29,6 @@
 
 namespace luabind { namespace detail {
 
-	namespace mpl = boost::mpl;
-
 	template<class Policies>
 	struct container_converter_lua_to_cpp
 	{

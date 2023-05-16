@@ -36,8 +36,6 @@ private:
     bool m_pointee_const;
 };
 
-namespace mpl = boost::mpl;
-
 inline std::false_type check_const_pointer(void*)
 {
     return std::false_type();

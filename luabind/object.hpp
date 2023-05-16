@@ -46,8 +46,6 @@ namespace luabind {
 
 namespace detail 
 {
-  namespace mpl = boost::mpl;
-
   template<class T, class ConverterGenerator>
   void push_aux(lua_State* interpreter, T& value, ConverterGenerator*)
   {
@@ -90,8 +88,6 @@ namespace detail
 
 namespace adl
 {
-  namespace mpl = boost::mpl;
-  
   template <class T>
   class object_interface;
   

@@ -164,8 +164,6 @@ namespace luabind { namespace detail
 	};
 	
 
-    namespace mpl = boost::mpl;
-
     template <class T, class Clone>
     void make_pointee_instance(lua_State* L, T& x, std::true_type, Clone)
     {

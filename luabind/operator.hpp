@@ -172,8 +172,6 @@ struct identity { typedef T type; };
     {
     }
 
-    namespace mpl = boost::mpl;
-
     template<class T, class Policies>
     inline void operator_result(lua_State* L, T const& x, Policies*)
     {

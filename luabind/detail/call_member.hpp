@@ -36,9 +36,6 @@ namespace luabind
 {
 	namespace detail
 	{
-
-		namespace mpl = boost::mpl;
-
 		// if the proxy_member_caller returns non-void
 			template<class Ret, class Tuple>
 			class proxy_member_caller
