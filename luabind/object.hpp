@@ -124,7 +124,7 @@ namespace adl
   template <class R, class T, class U>
   struct enable_binary
     : std::enable_if<
-          mpl::or_<
+          std::disjunction_v<
               is_object_interface<T>
             , is_object_interface<U>
           >

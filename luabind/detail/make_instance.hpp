@@ -12,7 +12,7 @@ namespace luabind { namespace detail {
 
 template <class T>
 std::pair<class_id, void*> get_dynamic_class_aux(
-    lua_State* L, T const* p, mpl::true_)
+    lua_State* L, T const* p, std::true_type)
 {
     lua_pushliteral(L, "__luabind_class_id_map");
     lua_rawget(L, LUA_REGISTRYINDEX);
@@ -30,7 +30,7 @@ std::pair<class_id, void*> get_dynamic_class_aux(
 
 template <class T>
 std::pair<class_id, void*> get_dynamic_class_aux(
-    lua_State*, T const* p, mpl::false_)
+    lua_State*, T const* p, std::false_type)
 {
     return std::make_pair(registered_class<T>::id, (void*)p);
 }

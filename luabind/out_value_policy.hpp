@@ -56,8 +56,6 @@ namespace luabind { namespace detail
 		static constexpr int value = sizeof(indirect_sizeof_test(LUABIND_DECORATE_TYPE(T)));
 	};
 
-	namespace mpl = boost::mpl;
-	
 	template<int Size, class Policies = detail::null_type>
 	struct out_value_converter
 	{
@@ -133,8 +131,8 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			using type = std::conditional_t<std::is_same<lua_to_cpp, Direction>
-				, std::conditional_t<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+			using type = std::conditional_t<std::is_same_v<lua_to_cpp, Direction>
+				, std::conditional_t<std::disjuntction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
 					>
@@ -211,8 +209,8 @@ namespace luabind { namespace detail
 		template<class T, class Direction>
 		struct apply
 		{
-			using type = std::conditional_t<std::is_same<lua_to_cpp, Direction>
-				, std::conditional_t<boost::mpl::or_<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+			using type = std::conditional_t<std::is_same_v<lua_to_cpp, Direction>
+				, std::conditional_t<std::disjuntction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, pure_out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
 					>

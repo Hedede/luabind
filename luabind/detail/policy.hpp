@@ -167,7 +167,7 @@ namespace luabind { namespace detail
     namespace mpl = boost::mpl;
 
     template <class T, class Clone>
-    void make_pointee_instance(lua_State* L, T& x, mpl::true_, Clone)
+    void make_pointee_instance(lua_State* L, T& x, std::true_type, Clone)
     {
         if (get_pointer(x))
         {
@@ -180,14 +180,14 @@ namespace luabind { namespace detail
     }
 
     template <class T>
-    void make_pointee_instance(lua_State* L, T& x, mpl::false_, mpl::true_)
+    void make_pointee_instance(lua_State* L, T& x, std::false_type, std::true_type)
     {
         std::unique_ptr<T> ptr(new T(x));
         make_instance(L, ptr);
     }
 
     template <class T>
-    void make_pointee_instance(lua_State* L, T& x, mpl::false_, mpl::false_)
+    void make_pointee_instance(lua_State* L, T& x, std::false_type, std::false_type)
     {
         make_instance(L, &x);
     }
@@ -203,7 +203,7 @@ namespace luabind { namespace detail
 	struct pointer_converter
 	{
 		typedef pointer_converter type;
-        typedef mpl::false_ is_native;
+        typedef std::false_type is_native;
 
         pointer_converter()
           : result(0)
@@ -262,7 +262,7 @@ namespace luabind { namespace detail
 	struct value_converter
 	{
 		typedef value_converter type;
-        typedef mpl::false_ is_native;
+        typedef std::false_type is_native;
 
         int const consumed_args(...)
         {
@@ -281,7 +281,7 @@ namespace luabind { namespace detail
 			if (luabind::get_back_reference(L, x))
 				return;
 
-            make_pointee_instance(L, x, mpl::true_());
+            make_pointee_instance(L, x, std::true_type());
 		}
 
 		template<class T>
@@ -314,7 +314,7 @@ namespace luabind { namespace detail
     struct const_pointer_converter
 	{
 		typedef const_pointer_converter type;
-        typedef mpl::false_ is_native;
+        typedef std::false_type is_native;
 
         int const consumed_args(...)
         {
@@ -370,7 +370,7 @@ namespace luabind { namespace detail
     struct ref_converter : pointer_converter
 	{
 		typedef ref_converter type;
-        typedef mpl::false_ is_native;
+        typedef std::false_type is_native;
 
         int const consumed_args(...)
         {
@@ -383,7 +383,7 @@ namespace luabind { namespace detail
 			if (luabind::get_back_reference(L, ref))
 				return;
 
-            make_pointee_instance(L, ref, mpl::false_());
+            make_pointee_instance(L, ref, std::false_type());
 		}
 
 		template<class T>
@@ -416,7 +416,7 @@ namespace luabind { namespace detail
 	struct const_ref_converter
 	{
 		typedef const_ref_converter type;
-        typedef mpl::false_ is_native;
+        typedef std::false_type is_native;
 
         int const consumed_args(...)
         {
@@ -435,7 +435,7 @@ namespace luabind { namespace detail
 			if (luabind::get_back_reference(L, ref))
 				return;
 
-            make_pointee_instance(L, ref, mpl::false_());
+            make_pointee_instance(L, ref, std::false_type());
 		}
 
 		template<class T>
@@ -468,7 +468,7 @@ namespace luabind { namespace detail
 	struct enum_converter
 	{
 		typedef enum_converter type;
-        typedef mpl::true_ is_native;
+        typedef std::true_type is_native;
 
         int const consumed_args(...)
         {
@@ -512,7 +512,7 @@ namespace luabind { namespace detail
 	struct value_wrapper_converter
 	{
 		typedef value_wrapper_converter<U> type;
-		typedef mpl::true_ is_native;
+		typedef std::true_type is_native;
 
         int const consumed_args(...)
         {

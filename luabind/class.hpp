@@ -360,7 +360,7 @@ namespace luabind
         template <class T>
         struct reference_result
           : std::conditional_t<
-                mpl::or_<std::is_pointer<T>, is_primitive<T> >
+                std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_reference_t<T>
             >
@@ -369,7 +369,7 @@ namespace luabind
         template <class T>
         struct reference_argument
           : std::conditional_t<
-                mpl::or_<std::is_pointer<T>, is_primitive<T> >
+                std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
               , std::add_reference_t<
                     std::add_const_t<T>
@@ -380,7 +380,7 @@ namespace luabind
         template <class T, class Policies>
         struct inject_dependency_policy
           : std::conditional_t<
-                mpl::or_<
+                std::disjunction_v<
                     is_primitive<T>
                   , has_policy<Policies, detail::no_dependency_policy>
                 >
@@ -512,17 +512,17 @@ namespace luabind
 		  , detail::null_type
 		>::type WrappedType;
 
-		typedef typename detail::extract_parameter<
+		using HeldType = detail::extract_parameter<
 		    parameters_type
-		  , boost::mpl::not_<
-		        boost::mpl::or_<
+		  , std::negation<
+		        std::disjunction<
                     detail::is_bases<boost::mpl::_>
                   , std::is_base_of<boost::mpl::_, T>
                   , std::is_base_of<T, boost::mpl::_>
 				>
 			>
 		  , detail::null_type
-		>::type HeldType;
+		>::type;
 
         template <class Src, class Target>
         void add_downcast(Src*, Target*, std::true_type)
@@ -772,7 +772,7 @@ namespace luabind
 		{
 			typedef typename detail::extract_parameter<
 					parameters_type
-				,	boost::mpl::or_<
+				,	std::disjunction<
 							detail::is_bases<boost::mpl::_>
 						,	std::is_base_of<boost::mpl::_, T>
 					>

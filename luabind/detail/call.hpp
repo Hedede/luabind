@@ -167,12 +167,12 @@ void invoke_function(
     (this_.*f)(std::forward<Args>(args)...);
 }
 
-inline int maybe_yield_aux(lua_State*, int results, mpl::false_)
+inline int maybe_yield_aux(lua_State*, int results, std::false_type)
 {
     return results;
 }
 
-inline int maybe_yield_aux(lua_State* L, int results, mpl::true_)
+inline int maybe_yield_aux(lua_State* L, int results, std::true_type)
 {
     return lua_yield(L, results);
 }

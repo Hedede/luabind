@@ -33,7 +33,7 @@
 namespace luabind { namespace detail 
 {
     template <class T>
-    void adjust_backref_ownership(T* ptr, mpl::true_)
+    void adjust_backref_ownership(T* ptr, std::true_type)
     {
         if (wrap_base* p = dynamic_cast<wrap_base*>(ptr))
         {
@@ -43,7 +43,7 @@ namespace luabind { namespace detail
         }
     }
 
-    inline void adjust_backref_ownership(void*, mpl::false_)
+    inline void adjust_backref_ownership(void*, std::false_type)
     {}
 
 	template <class Pointer, class Direction = lua_to_cpp>

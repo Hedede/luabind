@@ -38,14 +38,14 @@ private:
 
 namespace mpl = boost::mpl;
 
-inline mpl::false_ check_const_pointer(void*)
+inline std::false_type check_const_pointer(void*)
 {
-    return mpl::false_();
+    return std::false_type();
 }
 
-inline mpl::true_ check_const_pointer(void const*)
+inline std::true_type check_const_pointer(void const*)
 {
-    return mpl::true_();
+    return std::true_type();
 }
 
 template <class T>
