@@ -24,8 +24,6 @@
 #ifndef LUABIND_CLASS_REP_HPP_INCLUDED
 #define LUABIND_CLASS_REP_HPP_INCLUDED
 
-#include <boost/limits.hpp>
-
 #include <string>
 #include <utility>
 #include <vector>

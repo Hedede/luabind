@@ -38,7 +38,7 @@ public:
 
 private:
     class impl;
-    boost::unique_ptr<impl> m_impl;
+    std::unique_ptr<impl> m_impl;
 };
 
 // Maps a type_id to a class_id. Note that this actually partitions the

@@ -73,14 +73,6 @@
 #include <string>
 #include <cassert>
 
-#include <boost/mpl/apply.hpp>
-#include <boost/mpl/lambda.hpp>
-#include <boost/mpl/logical.hpp>
-#include <boost/mpl/find_if.hpp>
-#include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/logical.hpp>
-#include <boost/mpl/vector/vector10.hpp>
-
 #include <luabind/config.hpp>
 #include <luabind/scope.hpp>
 #include <luabind/back_reference.hpp>

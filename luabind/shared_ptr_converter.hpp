@@ -57,7 +57,7 @@ struct default_converter<std::shared_ptr<T> >
     void apply(lua_State* L, std::shared_ptr<T> const& p)
     {
         if (detail::shared_ptr_deleter* d =
-                boost::get_deleter<detail::shared_ptr_deleter>(p))
+                std::get_deleter<detail::shared_ptr_deleter>(p))
         {
             d->life_support.push(L);
         }

@@ -6,7 +6,6 @@
 
 #include <luabind/luabind.hpp>
 #include <luabind/iterator_policy.hpp>
-#include <boost/iterator/iterator_adaptor.hpp>
 
 struct container
 {
@@ -17,12 +16,12 @@ struct container
     }
 
     struct iterator
-      : boost::iterator_adaptor<iterator, int*>
     {
+        int* p;
         static std::size_t alive;
 
         iterator(int* p)
-          : iterator::iterator_adaptor_(p)
+          : p(p)
         {
             ++alive;
         }
@@ -37,6 +36,13 @@ struct container
         {
             --alive;
         }
+
+        iterator& operator++() { ++p; return *this; }
+        iterator& operator--() { --p; return *this; }
+        int& operator*() { return *p; }
+        int* operator*() { return p; }
+        bool operator==(iterator other) const { return p == other.p; }
+        bool operator!=(iterator other) const { return p != other.p; }
     };
 
     iterator begin()

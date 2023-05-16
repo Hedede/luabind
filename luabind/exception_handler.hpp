@@ -6,9 +6,9 @@
 # define LUABIND_EXCEPTION_HANDLER_050601_HPP
 
 # include <luabind/lua_include.hpp>
+# include <luabind/mpl.hpp>
 # include <luabind/config.hpp>
 # include <optional>
-# include <boost/type.hpp>
 
 namespace luabind {
 
@@ -64,7 +64,7 @@ namespace detail
 # endif
 
 template<class E, class Handler>
-void register_exception_handler(Handler handler, boost::type<E>* = 0)
+void register_exception_handler(Handler handler, detail::type<E>* = 0)
 {
 # ifndef LUABIND_NO_EXCEPTIONS
     detail::register_exception_handler(
@@ -74,7 +74,7 @@ void register_exception_handler(Handler handler, boost::type<E>* = 0)
 }
 
 template<class R, class F>
-std::optional<R> handle_exceptions(lua_State* L, F fn, boost::type<R>* = 0)
+std::optional<R> handle_exceptions(lua_State* L, F fn, detail::type<R>* = 0)
 {
 # ifndef LUABIND_NO_EXCEPTIONS
     try

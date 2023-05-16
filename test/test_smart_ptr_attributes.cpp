@@ -4,9 +4,10 @@
 
 #include "test.hpp"
 #include <luabind/luabind.hpp>
-#include <boost/shared_ptr.hpp>
 #include <luabind/shared_ptr_converter.hpp>
 #include <luabind/class_info.hpp>
+
+#include <memory>
 
 struct Foo
 {

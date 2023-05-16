@@ -23,8 +23,6 @@
 #ifndef LUABIND_OBJECT_050419_HPP
 #define LUABIND_OBJECT_050419_HPP
 
-#include <boost/implicit_cast.hpp> // detail::push()
-
 #include <tuple>
 #include <optional>
 #include <type_traits>
@@ -39,13 +37,22 @@
 #include <luabind/detail/convert_to_lua.hpp> // REFACTOR
 #include <luabind/typeid.hpp>
 
-#include <boost/iterator/iterator_facade.hpp> // iterator
-
 
 namespace luabind {
 
-namespace detail 
+namespace detail
 {
+
+template<class T> struct icast_identity
+{
+    typedef T type;
+};
+
+template <typename T>
+inline T implicit_cast (typename icast_identity<T>::type x) {
+    return x;
+}
+
   template<class T, class ConverterGenerator>
   void push_aux(lua_State* interpreter, T& value, ConverterGenerator*)
   {
@@ -61,7 +68,7 @@ namespace detail
 
       cv.apply(
           interpreter
-        , boost::implicit_cast<
+        , implicit_cast<
               std::unwrap_reference_t<T>&
           >(value)
       );
@@ -403,15 +410,12 @@ namespace detail
   };
 
   template<class AccessPolicy>
-  class basic_iterator 
-    : public boost::iterator_facade<
-        basic_iterator<AccessPolicy>
-      , adl::iterator_proxy<AccessPolicy>
-      , boost::single_pass_traversal_tag
-      , adl::iterator_proxy<AccessPolicy>
-    >
+  class basic_iterator
   {
   public:
+      using value_type = adl::iterator_proxy<AccessPolicy>;
+      using reference = adl::iterator_proxy<AccessPolicy>;
+      using iterator_category = std::input_iterator_tag;
       basic_iterator()
         : m_interpreter(0)
       {}
@@ -443,7 +447,16 @@ namespace detail
       adl::object key() const;
 
   private:
-      friend class boost::iterator_core_access;
+      basic_iterator& operator++()
+      {
+              increment();
+              return *this;
+      }
+
+      reference operator*()
+      {
+              return dereference();
+      }
 
       void increment()
       {
@@ -489,28 +502,6 @@ namespace detail
       handle m_key;
   };
 
-// Needed because of some strange ADL issues.
-
-#define LUABIND_OPERATOR_ADL_WKND(op) \
-  inline bool operator op( \
-      basic_iterator<basic_access> const& x \
-    , basic_iterator<basic_access> const& y) \
-  { \
-      return boost::operator op(x, y); \
-  } \
- \
-  inline bool operator op( \
-      basic_iterator<raw_access> const& x \
-    , basic_iterator<raw_access> const& y) \
-  { \
-      return boost::operator op(x, y); \
-  }
-
-  LUABIND_OPERATOR_ADL_WKND(==)
-  LUABIND_OPERATOR_ADL_WKND(!=)
-
-#undef LUABIND_OPERATOR_ADL_WKND
- 
 } // namespace detail
 
 namespace adl

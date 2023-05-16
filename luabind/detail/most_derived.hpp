@@ -23,7 +23,7 @@
 #ifndef MOST_DERIVED_051018_HPP
 # define MOST_DERIVED_051018_HPP
 
-# include <boost/mpl/if.hpp>
+# include <type_traits>
 
 namespace luabind { namespace detail {
 

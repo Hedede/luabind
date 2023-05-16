@@ -5,14 +5,12 @@
 #ifndef LUABIND_TYPEID_081227_HPP
 # define LUABIND_TYPEID_081227_HPP
 
-# include <boost/operators.hpp>
 # include <typeinfo>
 # include <luabind/detail/primitives.hpp>
 
 namespace luabind {
 
 class type_id
-  : public boost::less_than_comparable<type_id>
 {
 public:
     type_id()
@@ -37,6 +35,10 @@ public:
     {
         return id->before(*other.id);
     }
+
+    friend bool operator>(const typeid_& x, const typeid_& y)  { return y < x; }
+    friend bool operator<=(const typeid_& x, const typeid_& y) { return !static_cast<bool>(y < x); }
+    friend bool operator>=(const typeid_& x, const typeid_& y) { return !static_cast<bool>(x < y); }
 
     char const* name() const
     {

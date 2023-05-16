@@ -22,7 +22,6 @@
 
 #include <luabind/detail/typetraits.hpp>
 #include <luabind/detail/pointee_sizeof.hpp>
-#include <boost/static_assert.hpp>
 
 using namespace luabind;
 using namespace luabind::detail;

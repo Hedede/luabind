@@ -25,8 +25,6 @@
 
 #include <luabind/config.hpp>
 
-#include <boost/config.hpp>
-
 namespace luabind
 {
 

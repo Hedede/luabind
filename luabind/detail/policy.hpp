@@ -30,17 +30,6 @@
 #include <string>
 #include <memory>
 
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/integral_c.hpp>
-#include <boost/mpl/equal_to.hpp>
-#include <boost/mpl/eval_if.hpp>
-#include <boost/mpl/or.hpp>
-#include <boost/bind/arg.hpp>
-#include <boost/bind/placeholders.hpp>
-#include <boost/limits.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/version.hpp>
-
 #include <luabind/detail/class_registry.hpp>
 #include <luabind/detail/primitives.hpp>
 #include <luabind/detail/object_rep.hpp>
@@ -1004,9 +993,46 @@ namespace detail
 
 namespace luabind { namespace
 {
-  static boost::arg<0> return_value;
-  static boost::arg<0> result;
-# define LUABIND_PLACEHOLDER_ARG(N) boost::arg<N>
+
+template<bool Eq> struct _arg_eq
+{
+};
+
+template<> struct _arg_eq<true>
+{
+    typedef void type;
+};
+
+template< int I > struct arg
+{
+    constexpr arg()
+    {
+    }
+
+    template< class T > constexpr arg( T const & /* t */, typename _arg_eq< I == is_placeholder<T>::value >::type * = 0 )
+    {
+    }
+};
+
+template< int I > constexpr bool operator==( arg<I> const &, arg<I> const & )
+{
+    return true;
+}
+
+
+template< int I > struct is_placeholder< arg<I> >
+{
+    enum _vt { value = I };
+};
+
+template< int I > struct is_placeholder< arg<I> (*) () >
+{
+    enum _vt { value = I };
+};
+
+  static arg<0> return_value;
+  static arg<0> result;
+# define LUABIND_PLACEHOLDER_ARG(N) arg<N>
 }}
 
 #endif // LUABIND_POLICY_HPP_INCLUDED

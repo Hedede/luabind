@@ -5,7 +5,7 @@
 #ifndef LUABIND_VECTOR_100629_HPP
 # define LUABIND_VECTOR_100629_HPP
 
-#include "detail/fold.hpp"
+#include <luabind/mpl.h>
 
 namespace luabind {
 

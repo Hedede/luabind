@@ -21,7 +21,7 @@ bool dostring(lua_State* L, const char* str)
 
 #include <luabind/luabind.hpp>
 #include <luabind/detail/convert_to_lua.hpp>
-#include <boost/any.hpp>
+#include <any>
 
 template<class T>
 struct convert_any
