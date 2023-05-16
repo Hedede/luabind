@@ -48,7 +48,7 @@ namespace luabind { namespace operators {
 
 template <class Self, class... Args>
 struct call_operator
-  : detail::operator_<call_operator>
+  : detail::operator_<call_operator<Self,Args...>>
 {
     call_operator(int)
     {}
@@ -57,9 +57,9 @@ struct call_operator
     struct apply
     {
         static void execute(
-            lua_State* L
-          , typename detail::unwrap_parameter_type<T, Self>::type self
-          , detail::unwrap_parameter_type<T, Args>::type args...
+            lua_State* L ,
+	    typename detail::unwrap_parameter_type<T, Self>::type self ,
+	    detail::unwrap_parameter_type<T, Args>::type... args
         )
         {
             using namespace detail;
@@ -107,7 +107,7 @@ namespace detail {
         using type = eval_if_t<
             std::is_same<T, self_type>
           , identity<W&>
-          , eval_if_t<
+          , eval_if<
                 std::is_same<T, const_self_type>
               , identity<W const&>
               , unwrap_other<T>
