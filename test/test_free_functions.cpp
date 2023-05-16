@@ -138,8 +138,9 @@ void test_main(lua_State* L)
     }
     catch(luabind::error const& e)
     {
-        if (std::string("[string \"function failing_fun() error('expected "
-            "erro...\"]:1: expected error message") != lua_tostring(L, -1))
+		// TODO: use regex because exact string isn't fixed
+		const std::string expected("[string \"function failing_fun() error('expected error ...\"]:1: expected error message");
+		if (expected != lua_tostring(L, -1))
         {
             TEST_ERROR("function failed with unexpected error message");
         }
