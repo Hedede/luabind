@@ -27,7 +27,7 @@ struct container
         }
 
         iterator(iterator const& other)
-          : iterator::iterator_adaptor_(other)
+          : p(other.p)
         {
             ++alive;
         }
@@ -40,7 +40,7 @@ struct container
         iterator& operator++() { ++p; return *this; }
         iterator& operator--() { --p; return *this; }
         int& operator*() { return *p; }
-        int* operator*() { return p; }
+        int* operator->() { return p; }
         bool operator==(iterator other) const { return p == other.p; }
         bool operator!=(iterator other) const { return p != other.p; }
     };

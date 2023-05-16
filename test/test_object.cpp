@@ -29,32 +29,14 @@
 #include <luabind/operator.hpp>
 
 #include <utility>
+#include <sstream>
 
-template<typename T, typename U>
-T lexical_cast(U&& u)
+template<typename T>
+std::string lexical_cast(T value)
 {
-	using UU = std::remove_cv_t<std::remove_reference_t<U>>;
-	if constexpr(std::is_same_v<UU, std::string>)
-	{
-		if constexpr(std::is_same_v<T, std::string>)
-			return std::forward<U>(u);
-		else {
-			T result;
-			auto [ptr, ec] = std::from_chars(u.data(), u.data() + u.size(), result);
-
-			if (ec == std::errc())
-				;
-			else if (ec == std::errc::invalid_argument)
-				;
-			else if (ec == std::errc::result_out_of_range)
-				;
-			return result;
-		}
-	}
-	else
-	{
-		return std::to_string(u);
-	}
+	std::stringstream ss;
+	ss<<value;
+	return ss.str();
 }
 
 using namespace luabind;
@@ -384,9 +366,9 @@ void test_main(lua_State* L)
 	TEST_CHECK(ret_val == temp_val);
 
 	g["temp"] = "test string";
-	TEST_CHECK(lexical_cast<std::string>(g["temp"]) == "test string");
+	TEST_CHECK(lexical_cast(g["temp"]) == "test string");
 	g["temp"] = 6;
-	TEST_CHECK(lexical_cast<std::string>(g["temp"]) == "6");
+	TEST_CHECK(lexical_cast(g["temp"]) == "6");
 
 	TEST_CHECK(object_cast<std::string>(g["glob"]) == "teststring");
 	TEST_CHECK(object_cast<std::string>(gettable(g, "glob")) == "teststring");
