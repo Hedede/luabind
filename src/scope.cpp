@@ -144,7 +144,7 @@ namespace luabind {
 
                 lua_newtable(m_state);
                 lua_pushvalue(m_state, -1);
-                lua_settable(m_state, m_name);
+                lua_setglobal(m_state, m_name);
             }
         }
         else
