@@ -132,7 +132,7 @@ namespace luabind { namespace detail
 		struct apply
 		{
 			using type = std::conditional_t<std::is_same_v<lua_to_cpp, Direction>
-				, std::conditional_t<std::disjuntction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+				, std::conditional_t<std::disjunction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
 					>
@@ -210,7 +210,7 @@ namespace luabind { namespace detail
 		struct apply
 		{
 			using type = std::conditional_t<std::is_same_v<lua_to_cpp, Direction>
-				, std::conditional_t<std::disjuntction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
+				, std::conditional_t<std::disjunction_v<is_nonconst_reference<T>, is_nonconst_pointer<T> >
 					, pure_out_value_converter<indirect_sizeof<T>::value, Policies>
 					, only_accepts_nonconst_references_or_pointers
 					>

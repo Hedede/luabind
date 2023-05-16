@@ -24,11 +24,11 @@ void test_main(lua_State* L)
     using namespace luabind;
 
     module(L) [
-        def("f", tag_function<int(int)>(std::bind(&f, 5, _1))),
+        def("f", tag_function<int(int)>(std::bind(&f, 5, std::placeholders::_1))),
 
         class_<X>("X")
             .def(constructor<>())
-            .def("f", tag_function<int(X&, int)>(std::bind(&X::f, _1, 10, _2)))
+            .def("f", tag_function<int(X&, int)>(std::bind(&X::f, std::placeholders::_1, 10, std::placeholders::_2)))
     ];
 
     DOSTRING(L,

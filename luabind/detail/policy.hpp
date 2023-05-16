@@ -29,6 +29,7 @@
 #include <typeinfo>
 #include <string>
 #include <memory>
+#include <functional>
 
 #include <luabind/detail/class_registry.hpp>
 #include <luabind/detail/primitives.hpp>

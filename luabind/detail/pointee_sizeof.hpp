@@ -45,7 +45,7 @@ namespace luabind {
             sizeof(detail::deref_type((T(*)())0), 0L)
         );
 
-        using type = std::integral_constant<value>;
+        using type = std::integral_constant<size_t, value>;
     };
 
 } // namespace luabind
