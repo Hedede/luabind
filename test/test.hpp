@@ -25,7 +25,11 @@
 
 #include <luabind/error.hpp>
 
-extern "C" 
+#include <string>
+#include <string_view>
+#include <source_location>
+
+extern "C"
 {
     #include "lua.h"
     #include "lauxlib.h"
@@ -35,6 +39,7 @@ extern "C"
 inline lua_State* lua_open() { return luaL_newstate(); }
 
 void report_failure(char const* str, char const* file, int line);
+void report_failure(std::string_view str, std::source_location loc);
 
 #if defined(_MSC_VER)
 #define COUNTER_GUARD(x)
@@ -95,28 +100,30 @@ struct counted_type
 template<class T>
 int counted_type<T>::count = 0;
 
-#define DOSTRING_EXPECTED(state_, str, expected) \
-{                                               \
-    try                                         \
-    {                                           \
-        dostring(state_, str);                  \
-    }                                           \
-    catch (luabind::error const& e)             \
-    {                                           \
-		using namespace std;					\
-		if (std::strcmp(                        \
-            lua_tostring(e.state(), -1)         \
-          , (char const*)expected))             \
-        {                                       \
-            TEST_ERROR(lua_tostring(e.state(), -1)); \
-            lua_pop(L, 1);                      \
-        }                                       \
-    }                                           \
-    catch (std::string const& s)                \
-    {                                           \
-        if (s != expected)                      \
-            TEST_ERROR(s.c_str());              \
-    }                                           \
+inline void DOSTRING_EXPECTED(
+	lua_State* L,
+	const char* str,
+	std::string_view expected,
+	std::source_location loc = std::source_location::current())
+{
+	try
+	{
+		dostring(L, str);
+	}
+	catch (luabind::error const& e)
+	{
+		using namespace std;
+		if (lua_tostring(e.state(), -1) != expected)
+		{
+			report_failure(lua_tostring(e.state(), -1), loc.file_name(), loc.line());
+			lua_pop(L, 1);
+		}
+	}
+	catch (std::string const& s)
+	{
+		if (s != expected)
+			report_failure(s, loc);
+	}
 }
 
 #define DOSTRING(state_, str)                   \

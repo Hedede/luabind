@@ -21,6 +21,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <iostream>
+#include <iomanip>
 #include <cstring>
 
 extern "C"
@@ -109,7 +110,13 @@ bool tests_failure = false;
 
 void report_failure(char const* err, char const* file, int line)
 {
-	std::cerr << "failure:" << file << ":" << line << "\"" << err << "\"\n";
+	std::cerr << "failure: " << file << ":" << line << "\"" << err << "\"\n";
+	tests_failure = true;
+}
+
+void report_failure(std::string_view err, std::source_location loc)
+{
+	std::cerr << "failure: " << loc.file_name() << ":" << loc.line() << ": " << std::quoted(err) << "\n";
 	tests_failure = true;
 }
 
