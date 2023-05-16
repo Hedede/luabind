@@ -23,7 +23,7 @@
 #ifndef POINTEE_SIZEOF_040211_HPP
 #define POINTEE_SIZEOF_040211_HPP
 
-#include <boost/mpl/int.hpp>
+#include <utility>
 
 namespace luabind {
 
@@ -45,7 +45,7 @@ namespace luabind {
             sizeof(detail::deref_type((T(*)())0), 0L)
         );
 
-        typedef boost::mpl::int_<value> type;
+        using type = std::integral_constant<value>;
     };
 
 } // namespace luabind

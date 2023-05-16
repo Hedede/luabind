@@ -167,8 +167,7 @@ namespace luabind
         {};
 
         template <class T, class P>
-        struct is_unspecified
-          : mpl::apply1<P, T>
+        struct is_unspecified : apply<P, T>
         {};
 
         template <class P>
@@ -185,11 +184,17 @@ namespace luabind
             {};
         };
 
-		template<class Predicate>
-		struct get_predicate
-		{
-            typedef mpl::protect<is_unspecified_mfn<Predicate> > type;
-		};
+	template< typename T , int not_le_ = 0 >
+	struct protect : T
+	{
+		typedef protect type;
+	};
+
+	template<class Predicate>
+	struct get_predicate
+	{
+		using type = protect<is_unspecified_mfn<Predicate> >;
+	};
 
         template <class Result, class Default>
         struct result_or_default
@@ -207,7 +212,7 @@ namespace luabind
 		struct extract_parameter
 		{
 			typedef typename get_predicate<Predicate>::type pred;
-			typedef typename boost::mpl::find_if<Parameters, pred>::type iterator;
+			typedef typename find_if<Parameters, pred>::type iterator;
             typedef typename result_or_default<
                 typename iterator::type, DefaultValue
             >::type type;
@@ -508,7 +513,7 @@ namespace luabind
 		// WrappedType MUST inherit from T
 		typedef typename detail::extract_parameter<
 		    parameters_type
-		  , std::is_base_of<T, boost::mpl::_>
+		  , std::is_base_of<T, _1>
 		  , detail::null_type
 		>::type WrappedType;
 
@@ -516,9 +521,9 @@ namespace luabind
 		    parameters_type
 		  , std::negation<
 		        std::disjunction<
-                    detail::is_bases<boost::mpl::_>
-                  , std::is_base_of<boost::mpl::_, T>
-                  , std::is_base_of<T, boost::mpl::_>
+                    detail::is_bases<_1>
+                  , std::is_base_of<_1, T>
+                  , std::is_base_of<T, _1>
 				>
 			>
 		  , detail::null_type
@@ -773,8 +778,8 @@ namespace luabind
 			typedef typename detail::extract_parameter<
 					parameters_type
 				,	std::disjunction<
-							detail::is_bases<boost::mpl::_>
-						,	std::is_base_of<boost::mpl::_, T>
+							detail::is_bases<_1>
+						,	std::is_base_of<_1, T>
 					>
 				,	no_bases
 			>::type bases_t;

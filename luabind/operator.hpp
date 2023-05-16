@@ -23,7 +23,6 @@
 #ifndef OPERATOR_040729_HPP
 #define OPERATOR_040729_HPP
 
-#include <boost/mpl/eval_if.hpp>
 #include <luabind/detail/other.hpp>
 #include <luabind/raw_policy.hpp>
 
@@ -105,18 +104,26 @@ namespace detail {
 template<typename T>
 struct identity { typedef T type; };
 
+template< typename C , typename F1 , typename F2 >
+struct eval_if : std::conditional_t<C::value,F1,F2>
+{
+};
+
+template< typename C , typename F1 , typename F2 >
+using eval_if_t = eval_if<C,F1,F2>::type;
+
     template<class W, class T>
     struct unwrap_parameter_type
     {
-        typedef typename boost::mpl::eval_if<
+        using type = eval_if_t<
             std::is_same<T, self_type>
-          , boost::mpl::identity<W&>
-          , boost::mpl::eval_if<
+          , identity<W&>
+          , eval_if_t<
                 std::is_same<T, const_self_type>
               , identity<W const&>
               , unwrap_other<T>
             >
-        >::type type;
+        >;
     };
 
     template<class Derived, class A, class B>

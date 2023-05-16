@@ -554,22 +554,22 @@ namespace luabind { namespace detail
 
     template <class T>
     struct default_converter_generator
-      : mpl::eval_if<
+      : eval_if<
             is_value_wrapper_arg<T>
           , value_wrapper_converter<T>
-          , mpl::eval_if<
+          , eval_if<
                 std::is_enum<std::remove_reference_t<T>>
               , enum_converter
-              , mpl::eval_if<
+              , eval_if<
                     is_nonconst_pointer<T>
                   , pointer_converter
-                  , mpl::eval_if<
+                  , eval_if<
                         is_const_pointer<T>
                       , const_pointer_converter
-                      , mpl::eval_if<
+                      , eval_if<
                             is_nonconst_reference<T>
                           , ref_converter
-                          , mpl::eval_if<
+                          , eval_if<
                                 is_const_reference<T>
                               , const_ref_converter
                               , value_converter
