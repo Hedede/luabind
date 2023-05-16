@@ -48,3 +48,7 @@ static_assert(! lb::has_get_pointer<int>::value );
 static_assert(! lb::has_get_pointer<test::X>::value );
 static_assert( lb::has_get_pointer<test::Z*>::value );
 
+#include "test.hpp"
+void test_main(lua_State*)
+{
+}
