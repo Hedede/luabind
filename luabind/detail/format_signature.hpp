@@ -131,7 +131,8 @@ void format_signature(lua_State* L, char const* function, vector<R, Args...>)
     lua_pushstring(L, function);
 
     lua_pushstring(L, "(");
-    format_signature_aux(L, vector<R, Args...>());
+    if constexpr(sizeof...(Args)>0)
+		format_signature_aux(L, vector<Args...>());
     lua_pushstring(L, ")");
 
     lua_concat(L, (sizeof...(Args) + 1) * 2 + 2);
