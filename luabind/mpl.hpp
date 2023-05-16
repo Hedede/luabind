@@ -1,11 +1,10 @@
+#ifndef LUABIND_MPL_HPP_INCLUDED
+#define LUABIND_MPL_HPP_INCLUDED
 #include <type_traits>
 // standalone version of meta from awlib
 // https://github.com/absurdworlds/awlib/blob/master/meta/include/aw/meta/expand.h
 // https://github.com/absurdworlds/awlib/blob/master/meta/include/aw/meta/fold.h
-namespace luabind::detail {
-
-template <class T>
-struct type {};
+namespace luabind {
 
 struct _1 {};
 struct _2 {};
@@ -162,7 +161,7 @@ template<
 	typename Init,
 	// List of types
 	typename...Ts>
-using fold = typename meta::fold<Op, Init, Ts...>::type;
+using fold = typename detail::fold<Op, Init, Ts...>::type;
 
 template<
 	// Operation to apply to each pair
@@ -171,7 +170,7 @@ template<
 	typename Init,
 	// List of types
 	typename...Ts>
-using fold_apply = typename meta::fold<Op, Init, Ts...>::type;
+using fold_apply = typename detail::fold<Op, Init, Ts...>::type;
 
 template<
 	template<typename A, typename B> typename Op,
@@ -179,4 +178,16 @@ template<
 	typename...Ts>
 constexpr inline auto fold_v = fold<Op, Init, Ts...>::value;
 
-} // namespace luabind::detail
+template<typename T>
+struct identity { typedef T type; };
+
+template< typename C , typename F1 , typename F2 >
+struct eval_if : std::conditional_t<C::value,F1,F2>
+{
+};
+
+template< typename C , typename F1 , typename F2 >
+using eval_if_t = typename eval_if<C,F1,F2>::type;
+
+} // namespace luabind
+#endif//LUABIND_MPL_HPP_INCLUDED

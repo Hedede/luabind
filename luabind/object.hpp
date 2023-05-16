@@ -25,7 +25,10 @@
 
 #include <tuple>
 #include <optional>
+#include <ostream>
 #include <type_traits>
+#include <functional>
+#include <iterator>
 
 #include <luabind/nil.hpp>
 #include <luabind/value_wrapper.hpp>
@@ -53,14 +56,21 @@ inline T implicit_cast (typename icast_identity<T>::type x) {
     return x;
 }
 
+template <class T>
+struct unwrap_reference { using type = T; };
+template <class U>
+struct unwrap_reference<std::reference_wrapper<U>> { using type = U&; };
+template<typename T>
+using unwrap_reference_t = typename unwrap_reference<T>::type;
+
   template<class T, class ConverterGenerator>
   void push_aux(lua_State* interpreter, T& value, ConverterGenerator*)
   {
 	  using unwrapped_type  = std::conditional_t<
 		is_reference_wrapper<T>::value,
-		std::unwrap_reference_t<T>&,
+		unwrap_reference_t<T>&,
 		T
-	>
+	>;
 
       typename apply_wrap2<
           ConverterGenerator,unwrapped_type,cpp_to_lua
@@ -69,7 +79,7 @@ inline T implicit_cast (typename icast_identity<T>::type x) {
       cv.apply(
           interpreter
         , implicit_cast<
-              std::unwrap_reference_t<T>&
+              unwrap_reference_t<T>&
           >(value)
       );
   }
@@ -918,7 +928,7 @@ namespace detail
   {
       static std::optional<T> handle_error(lua_State*, type_id const&)
       {
-          return {}
+          return {};
       }
   };
 

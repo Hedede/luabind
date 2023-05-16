@@ -97,7 +97,7 @@
 # define LUABIND_API
 #endif
 
-#define LUABIND_CAT(x, y)   LUABIND_CONCAT_(x, y)
+#define LUABIND_CAT(x, y)   LUABIND_CAT_(x, y)
 #define LUABIND_CAT_(x, y)  x##y
 
 namespace luabind {

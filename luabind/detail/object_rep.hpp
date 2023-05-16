@@ -91,7 +91,7 @@ namespace luabind { namespace detail
 	{}
 
         instance_holder* m_instance;
-	alignas(32) unsigned char data[32] m_instance_buffer;
+	alignas(32) unsigned char m_instance_buffer[32];
 	class_rep* m_classrep; // the class information about this object's type
         std::size_t m_dependency_cnt; // counts dependencies
 	};

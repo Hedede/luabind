@@ -5,7 +5,7 @@
 #ifndef LUABIND_VECTOR_100629_HPP
 # define LUABIND_VECTOR_100629_HPP
 
-#include <luabind/mpl.h>
+#include <luabind/mpl.hpp>
 
 namespace luabind {
 
@@ -47,8 +47,11 @@ namespace detail
       };
   };
 
+  template <class V, class T>
+  using append_vector_t = typename append_vector::apply<V,T>::type;
+
   template <class Sequence>
-  struct as_vector : fold<Sequence, vector<>, append_vector>
+  struct as_vector : fold<append_vector_t, vector<>, Sequence>
   {};
 
   template <class... Args>

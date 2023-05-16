@@ -96,19 +96,13 @@
 #include <luabind/detail/signature_match.hpp>
 #include <luabind/no_dependency.hpp>
 #include <luabind/typeid.hpp>
+#include <luabind/vector.hpp>
 
 // to remove the 'this' used in initialization list-warning
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4355)
 #endif
-
-namespace boost
-{
-
-  template <class T> class shared_ptr;
-
-} // namespace boost
 
 namespace luabind
 {	

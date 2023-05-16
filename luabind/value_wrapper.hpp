@@ -38,8 +38,7 @@ struct value_wrapper_traits
 };
 
 template<class T>
-struct is_value_wrapper
-  : typename value_wrapper_traits<T>::is_specialized
+struct is_value_wrapper : value_wrapper_traits<T>::is_specialized
 {};
 
 template<class T>

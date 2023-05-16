@@ -43,6 +43,7 @@
 #include <luabind/weak_ref.hpp>
 #include <luabind/back_reference_fwd.hpp>
 
+#include <luabind/mpl.hpp>
 #include <luabind/value_wrapper.hpp>
 #include <luabind/from_stack.hpp>
 #include <luabind/typeid.hpp>
@@ -993,6 +994,11 @@ namespace detail
 
 namespace luabind { namespace
 {
+
+template< class T > struct is_placeholder
+{
+    enum _vt { value = 0 };
+};
 
 template<bool Eq> struct _arg_eq
 {

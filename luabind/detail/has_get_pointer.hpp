@@ -33,7 +33,7 @@ template<class T, class = void>
 struct has_get_pointer : std::false_type {};
 
 template<class T>
-struct has_get_pointer<T, std::void_t<decltype(get_pointer(T))>> : std::true_type
+struct has_get_pointer<T, std::void_t<decltype(get_pointer(std::declval<T>()))>> : std::true_type
 {};
 
 }} // namespace luabind::detail

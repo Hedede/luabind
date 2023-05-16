@@ -36,9 +36,9 @@ public:
         return id->before(*other.id);
     }
 
-    friend bool operator>(const typeid_& x, const typeid_& y)  { return y < x; }
-    friend bool operator<=(const typeid_& x, const typeid_& y) { return !static_cast<bool>(y < x); }
-    friend bool operator>=(const typeid_& x, const typeid_& y) { return !static_cast<bool>(x < y); }
+    friend bool operator>(const type_id& x, const type_id& y)  { return y < x; }
+    friend bool operator<=(const type_id& x, const type_id& y) { return !static_cast<bool>(y < x); }
+    friend bool operator>=(const type_id& x, const type_id& y) { return !static_cast<bool>(x < y); }
 
     char const* name() const
     {

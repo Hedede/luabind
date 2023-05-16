@@ -101,17 +101,6 @@ namespace luabind {
 
 namespace detail {
 
-template<typename T>
-struct identity { typedef T type; };
-
-template< typename C , typename F1 , typename F2 >
-struct eval_if : std::conditional_t<C::value,F1,F2>
-{
-};
-
-template< typename C , typename F1 , typename F2 >
-using eval_if_t = eval_if<C,F1,F2>::type;
-
     template<class W, class T>
     struct unwrap_parameter_type
     {
