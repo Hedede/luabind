@@ -353,7 +353,7 @@ namespace luabind
           : std::conditional_t<
                 std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
-              , std::add_reference_t<T>
+              , std::add_lvalue_reference_t<T>
             >
         {};
 
@@ -362,7 +362,7 @@ namespace luabind
           : std::conditional_t<
                 std::disjunction_v<std::is_pointer<T>, is_primitive<T> >
               , T
-              , std::add_reference_t<
+              , std::add_lvalue_reference_t<
                     std::add_const_t<T>
                 >
             >
@@ -503,7 +503,7 @@ namespace luabind
 		  , detail::null_type
 		>::type WrappedType;
 
-		using HeldType = detail::extract_parameter<
+		using HeldType = typename detail::extract_parameter<
 		    parameters_type
 		  , std::negation<
 		        std::disjunction<
@@ -770,7 +770,7 @@ namespace luabind
 				,	no_bases
 			>::type bases_t;
 
-			using Base = std::conditional_t<detail::is_bases<bases_t>
+			using Base = std::conditional_t<detail::is_bases<bases_t>::value
 					,	bases_t
 					,	bases<bases_t>
 				>;
